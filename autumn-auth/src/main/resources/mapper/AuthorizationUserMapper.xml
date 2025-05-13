@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.autumn.auth.mapper.AuthorizationUserMapper">
+
+
+    <!-- 根据user_id 查询menu_id -->
+
+    <select id="listPage" resultType="com.autumn.auth.model.vo.AuthorizationUserVo">
+        select *
+        from authorization_user
+        <where>
+            flag = 0
+            <if test="query.username != null and query.username != ''">
+                AND authorization_user.username LIKE CONCAT(CONCAT('%', #{query.username}),'%')
+            </if>
+            <if test="query.status != null">
+                AND authorization_user.status = #{query.status}
+            </if>
+            <if test="query.phone != null and query.phone != ''">
+                AND authorization_user.phone LIKE CONCAT(CONCAT('%', #{query.phone}),'%')
+            </if>
+        </where>
+        ORDER BY authorization_user.create_time ASC
+    </select>
+</mapper>

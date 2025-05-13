@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.autumn.auth.mapper.RoleMapper">
+
+    <select id="listPage" resultType="com.autumn.auth.model.vo.RoleVo">
+        select *
+        from role
+        <where>
+            <if test="query.roleName != null and query.roleName != ''">
+                AND role.role_name LIKE CONCAT(CONCAT('%', #{query.roleName}),'%')
+            </if>
+
+            <if test="query.permission != null and query.permission != ''">
+                AND role.permission LIKE CONCAT(CONCAT('%', #{query.permission}),'%')
+            </if>
+
+            <if test="query.isLock != null">
+                AND role.is_lock = #{query.isLock}
+            </if>
+        </where>
+    </select>
+</mapper>

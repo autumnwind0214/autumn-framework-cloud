@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.autumn.auth.mapper.MenuMapper">
+
+    <sql id="MenuSql">
+        select menu.id,
+               menu.parent_id,
+               menu.menu_type,
+               menu.title,
+               menu.name,
+               menu.path,
+               menu.component,
+               menu.sort,
+               menu.redirect,
+               menu.icon,
+               menu.extra_icon,
+               menu.enter_transition,
+               menu.leave_transition,
+               menu.active_path,
+               menu.auths,
+               menu.frame_src,
+               menu.frame_loading,
+               menu.keep_alive,
+               menu.hidden_tag,
+               menu.fixed_tag,
+               menu.show_link,
+               menu.show_parent
+        from menu
+    </sql>
+
+    <select id="list" parameterType="com.autumn.auth.model.dto.MenuDto" resultType="com.autumn.auth.model.vo.MenuVo">
+        <include refid="MenuSql"/>
+        <where>
+            <if test="title != null and title != ''">
+                and menu.title = #{title}
+            </if>
+        </where>
+    </select>
+
+
+    <update id="syncTreeDeep">
+        UPDATE menu AS m
+            JOIN menu AS parent
+            ON m.pid = parent.id
+        SET m.deep = parent.deep + 1
+        WHERE 1=1 and m.flag = 0;
+    </update>
+    <update id="syncTreeHasChildren">
+        UPDATE menu AS m
+            JOIN (
+                SELECT id,
+                       IF(EXISTS (SELECT 1 FROM menu WHERE pid = sub_m.id), 1, 0) AS has_children
+                FROM menu AS sub_m
+                WHERE 1=1 and sub_m.flag = 0
+            ) AS subquery
+            ON m.id = subquery.id
+        SET m.has_children = 1
+        WHERE subquery.has_children = 1;
+    </update>
+    <update id="updateMenuAndChildrenIsDelete">
+        UPDATE menu
+        SET flag = 1
+        WHERE id IN
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        ;
+    </update>
+
+    <select id="selectMenuAndChildrenIds" resultType="java.lang.Long">
+        WITH RECURSIVE MenuCTE AS (
+        SELECT id, pid
+        FROM menu
+        WHERE id IN
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        AND flag = 0
+        UNION ALL
+        SELECT menu.id, menu.pid
+        FROM menu
+        JOIN MenuCTE cte ON menu.pid = cte.id
+        WHERE menu.flag = 0
+        )
+        SELECT id FROM MenuCTE;
+    </select>
+
+</mapper>

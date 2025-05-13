@@ -1,0 +1,38 @@
+server:
+  port: 11000
+spring:
+  application:
+    name: autumn-auth
+    ip: 127.0.0.1:8848
+    username: nacos
+    password: nacos
+    namespace: 20b9256c-5577-4683-a58a-cc50d54d8a3d
+  profiles:
+    active: dev
+  main:
+    allow-bean-definition-overriding: true
+  cloud:
+    nacos:
+      # 注册中心
+      discovery:
+        username: ${spring.application.username}
+        password: ${spring.application.password}
+        namespace: ${spring.application.namespace}
+        server-addr: ${spring.application.ip}
+      # 配置中心
+      config:
+        username: ${spring.application.username}
+        password: ${spring.application.password}
+        namespace: ${spring.application.namespace}
+        server-addr: ${spring.application.ip}
+        prefix: ${spring.application.name}
+        file-extension: yaml
+        group: ${spring.profiles.active}
+        shared-configs:
+          - data-id: common-mybatis.yml
+            group: ${spring.profiles.active}
+logging:
+  level:
+    org.springframework.security: debug
+    org.springframework.security.oauth2: debug
+    com.autumn.auth: debug

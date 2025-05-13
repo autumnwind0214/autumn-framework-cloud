@@ -1,0 +1,67 @@
+server:
+  port: 10000
+spring:
+  application:
+    name: autumn_gateway
+    ip: 127.0.0.1:8848
+    username: nacos
+    password: nacos
+    namespace: 20b9256c-5577-4683-a58a-cc50d54d8a3d
+  profiles:
+    active: dev
+  cloud:
+    nacos:
+      # 注册中心
+      discovery:
+        username: ${spring.application.username}
+        password: ${spring.application.password}
+        namespace: ${spring.application.namespace}
+        server-addr: ${spring.application.ip}
+      # 配置中心
+      config:
+        username: ${spring.application.username}
+        password: ${spring.application.password}
+        namespace: ${spring.application.namespace}
+        server-addr: ${spring.application.ip}
+        prefix: ${spring.application.name}
+        file-extension: yaml
+        group: ${spring.profiles.active}
+#  security:
+#    oauth2:
+#      resourceserver:
+#        jwt:
+#          issuer-uri: http://127.0.0.1:11000
+#      client:
+#        provider:
+#          # 认证服务器信息
+#          oauth-server:
+#            # 授权地址
+#            issuer-uri: http://127.0.0.1:11000
+#            authorization-uri: ${spring.security.oauth2.client.provider.oauth-server.issuer-uri}/oauth2/authorize
+#            # 令牌获取地址
+#            token-uri: ${spring.security.oauth2.client.provider.oauth-server.issuer-uri}/oauth2/token
+#            # 获取用户信息
+#            user-info-uri: ${spring.security.oauth2.client.provider.oauth-server.issuer-uri}/user
+#        registration:
+#          message-client:
+#            # 认证提供者，标识由哪个认证服务器进行认证，和上面的oauth-server进行关联
+#            provider: oauth-server
+#            # 客户端名称
+#            client-name: 8cf18281-d5ca-4fe8-8bfb-25e485cdc23d
+#            # 客户端id，从认证平台申请的客户端id
+#            client-id: messaging-client
+#            # 客户端密钥
+#            client-secret: 123456
+#            # 客户端认证方式
+#            client-authentication-method: none
+#            authorization-grant-type: authorization_code
+#            # 回调地址，接收认证服务器回传code的接口地址
+#            redirect-uri: http://127.0.0.1:10000/login/oauth2/code/message-client
+#            scope:
+#              - profile
+#              - openid
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.web.reactive: TRACE
