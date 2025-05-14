@@ -67,6 +67,6 @@ public class UserDto {
     /**
      * 状态
      */
-    private Integer status;
+    private Boolean status;
 
 }

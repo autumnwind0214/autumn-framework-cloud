@@ -2,7 +2,7 @@ package com.autumn.auth.authorization.grant;
 
 
 import com.autumn.auth.authorization.captcha.CaptchaAuthenticationProvider;
-import com.autumn.common.core.constant.SecurityConstants;
+import com.autumn.auth.constant.SecurityConstants;
 import com.autumn.common.redis.constant.RedisConstant;
 import com.autumn.common.redis.core.RedisOperator;
 import com.autumn.auth.exception.InvalidCaptchaException;
@@ -74,11 +74,13 @@ public class AutumnLoginAuthenticationProvider extends CaptchaAuthenticationProv
             if (!Objects.equals(captcha, authentication.getCredentials())) {
                 throw new BadCredentialsException("The sms captcha is incorrect.");
             }
+            redisOperator.delete(RedisConstant.SMS_CAPTCHA_PREFIX_KEY + authentication.getPrincipal());
         } else if (Objects.equals(grantType, SecurityConstants.EMAIL_LOGIN_TYPE)) {
             String captcha = redisOperator.get(RedisConstant.EMAIL_CAPTCHA_PREFIX_KEY + authentication.getPrincipal());
             if (!Objects.equals(captcha, authentication.getCredentials())) {
                 throw new BadCredentialsException("The email captcha is incorrect.");
             }
+            redisOperator.delete(RedisConstant.SMS_CAPTCHA_PREFIX_KEY + authentication.getPrincipal());
         } else {
             log.info("Not sms captcha loginType, exit.");
             // 其它调用父类默认实现的密码方式登录

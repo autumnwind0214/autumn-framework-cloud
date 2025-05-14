@@ -1,6 +1,6 @@
 package com.autumn.auth.authorization.captcha;
 
-import com.autumn.common.core.constant.SecurityConstants;
+import com.autumn.auth.constant.SecurityConstants;
 import com.autumn.common.redis.constant.RedisConstant;
 import com.autumn.common.redis.core.RedisOperator;
 import com.autumn.auth.exception.InvalidCaptchaException;
@@ -75,6 +75,7 @@ public class CaptchaAuthenticationProvider extends DaoAuthenticationProvider {
             if (!captchaCode.equalsIgnoreCase(code)) {
                 throw new InvalidCaptchaException("The captcha is incorrect.");
             }
+            redisOperator.delete(RedisConstant.IMAGE_CAPTCHA_PREFIX_KEY + captchaId);
         } else {
             throw new InvalidCaptchaException("The captcha is abnormal. Obtain it again.");
         }

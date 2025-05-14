@@ -42,7 +42,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.OK)
     public R<String> exception(Exception e) {
         HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
-        log.error("【系统异常】{}", e.getMessage());
+        log.error("【系统异常】", e);
         // e.printStackTrace();
         log.warn("【请求信息-RequestURL】 {}", request.getRequestURL());
 

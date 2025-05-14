@@ -43,8 +43,5 @@ public class BaseEntity implements Serializable {
      * 逻辑删除
      **/
     @TableLogic
-    private Byte flag;
-
-    private Long createUser;
-    private Long updateUser;
+    private Integer flag;
 }

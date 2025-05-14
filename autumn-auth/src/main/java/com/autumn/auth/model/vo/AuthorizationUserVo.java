@@ -20,15 +20,15 @@ public class AuthorizationUserVo {
     Long id;
 
     /**
-     * 用户名
+     * 账号
      */
-    String username;
+    String account;
 
     /**
      * 手机号
      */
     @SensitiveData(type = SensitiveTypeEnum.PHONE)
-    String phone;
+    String mobile;
 
     /**
      * 昵称
@@ -59,7 +59,7 @@ public class AuthorizationUserVo {
     /**
      * 最后登录时间
      */
-    LocalDateTime lastLoginTime;
+    LocalDateTime loginTime;
 
     // 用户绑定角色
     String[] roles;
@@ -67,6 +67,6 @@ public class AuthorizationUserVo {
     // 用户权限
     String[] permissions;
 
-    Integer status;
+    Boolean status;
 
 }

@@ -1,7 +1,7 @@
 package com.autumn.auth.authorization.grant;
 
 
-import com.autumn.common.core.constant.SecurityConstants;
+import com.autumn.auth.constant.SecurityConstants;
 import com.autumn.auth.utils.SecurityUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.core.Authentication;
@@ -109,11 +109,11 @@ public class AutumnGrantAuthenticationConverter implements AuthenticationConvert
             }
             case (SecurityConstants.PASSWORD_LOGIN_TYPE) -> {
                 // Username (REQUIRED)
-                String username = parameters.getFirst(SecurityConstants.OAUTH_PARAMETER_NAME_USERNAME);
-                if (!StringUtils.hasText(username) || parameters.get(SecurityConstants.OAUTH_PARAMETER_NAME_USERNAME).size() != 1) {
+                String username = parameters.getFirst(SecurityConstants.OAUTH_PARAMETER_NAME_ACCOUNT);
+                if (!StringUtils.hasText(username) || parameters.get(SecurityConstants.OAUTH_PARAMETER_NAME_ACCOUNT).size() != 1) {
                     SecurityUtils.throwError(
                             OAuth2ErrorCodes.INVALID_REQUEST,
-                            "OAuth 2.0 Parameter: " + SecurityConstants.OAUTH_PARAMETER_NAME_USERNAME,
+                            "OAuth 2.0 Parameter: " + SecurityConstants.OAUTH_PARAMETER_NAME_ACCOUNT,
                             ACCESS_TOKEN_REQUEST_ERROR_URI);
                 }
                 String password = parameters.getFirst(SecurityConstants.OAUTH_PARAMETER_NAME_PASSWORD);

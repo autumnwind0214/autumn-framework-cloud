@@ -1,7 +1,8 @@
 package com.autumn.auth.authorization.grant;
 
 
-import com.autumn.common.core.constant.SecurityConstants;
+import com.autumn.auth.constant.SecurityConstants;
+import com.autumn.auth.local.GrantThreadLocal;
 import com.autumn.auth.utils.SecurityUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -217,8 +218,10 @@ public class AutumnGrantAuthenticationProvider implements AuthenticationProvider
         UsernamePasswordAuthenticationToken unauthenticated = null;
         Map<String, Object> additionalParameters = authenticationToken.getAdditionalParameters();
         String grantType = authenticationToken.getAuthorizationGrantType().getValue();
+        GrantThreadLocal.setGrantType(grantType);
         switch (grantType) {
             case SecurityConstants.SMS_LOGIN_TYPE -> {
+
                 // 短信验证码登录
                 String phone = (String) additionalParameters.get(SecurityConstants.OAUTH_PARAMETER_NAME_PHONE);
                 String smsCaptcha = (String) additionalParameters.get(SecurityConstants.OAUTH_PARAMETER_NAME_PHONE_CAPTCHA);
@@ -227,7 +230,7 @@ public class AutumnGrantAuthenticationProvider implements AuthenticationProvider
             }
             case SecurityConstants.PASSWORD_LOGIN_TYPE -> {
                 // 密码登录
-                String username = (String) additionalParameters.get(SecurityConstants.OAUTH_PARAMETER_NAME_USERNAME);
+                String username = (String) additionalParameters.get(SecurityConstants.OAUTH_PARAMETER_NAME_ACCOUNT);
                 String password = (String) additionalParameters.get(SecurityConstants.OAUTH_PARAMETER_NAME_PASSWORD);
                 // 构建UsernamePasswordAuthenticationToken通过AbstractUserDetailsAuthenticationProvider及其子类对用户名与密码进行校验
                 unauthenticated = UsernamePasswordAuthenticationToken.unauthenticated(username, password);
@@ -248,11 +251,14 @@ public class AutumnGrantAuthenticationProvider implements AuthenticationProvider
         try {
             authenticate = authenticationManager.authenticate(unauthenticated);
         } catch (Exception e) {
+            log.error("Authentication failed.", e);
             SecurityUtils.throwError(
                     OAuth2ErrorCodes.INVALID_REQUEST,
                     "认证失败.",
                     ERROR_URI
             );
+        } finally {
+            GrantThreadLocal.clear();
         }
         return authenticate;
     }

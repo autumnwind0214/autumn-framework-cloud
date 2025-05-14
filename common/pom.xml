@@ -13,6 +13,7 @@
         <module>common-redis</module>
         <module>common-auth</module>
         <module>common-sensitive</module>
+        <module>common-oss</module>
     </modules>
 
     <artifactId>common</artifactId>

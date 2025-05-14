@@ -1,6 +1,6 @@
 package com.autumn.common.auth.config;
 
-import com.autumn.common.core.constant.SecurityConstants;
+import com.autumn.common.auth.constant.GrantAuthConstant;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
@@ -27,7 +27,7 @@ public class AuthoritiesConfig {
             authorities.forEach(authority -> {
                 if (authority instanceof OAuth2UserAuthority oAuth2UserAuthority) {
                     // 从认证服务获取的用户信息中提取权限信息
-                    Object userAuthorities = oAuth2UserAuthority.getAttributes().get(SecurityConstants.AUTHORITIES_KEY);
+                    Object userAuthorities = oAuth2UserAuthority.getAttributes().get(GrantAuthConstant.AUTHORITIES_KEY);
                     if (userAuthorities instanceof Collection<?> collection) {
                         // 转为SimpleGrantedAuthority的实例并插入mappedAuthorities中
                         collection.stream().filter(a -> a instanceof String)

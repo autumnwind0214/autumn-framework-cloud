@@ -4,7 +4,7 @@ import com.autumn.auth.authorization.federation.FederatedIdentityIdTokenCustomiz
 import com.autumn.auth.authorization.grant.AutumnGrantAuthenticationConverter;
 import com.autumn.auth.authorization.grant.AutumnGrantAuthenticationProvider;
 import com.autumn.auth.authorization.handler.*;
-import com.autumn.common.core.constant.SecurityConstants;
+import com.autumn.auth.constant.SecurityConstants;
 import com.autumn.auth.properties.CustomSecurityProperties;
 import com.autumn.auth.utils.SecurityUtils;
 import com.nimbusds.jose.jwk.JWKSet;
@@ -44,6 +44,7 @@ import org.springframework.security.oauth2.server.authorization.config.annotatio
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
+import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
 import org.springframework.security.oauth2.server.authorization.token.*;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
@@ -56,6 +57,7 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -279,6 +281,15 @@ public class AuthorizationConfig {
                 .scope("message.write")
                 // 客户端设置，设置用户需要确认授权
                 .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
+                // toke设置
+                .tokenSettings(
+                        TokenSettings.builder()
+                                // 令牌有效期，默认60分钟
+                                .accessTokenTimeToLive(Duration.ofMinutes(60))
+                                // 刷新令牌有效期，默认30天
+                                .refreshTokenTimeToLive(Duration.ofDays(30))
+                                .build()
+                )
                 .build();
 
         // 基于db存储客户端，还有一个基于内存的实现 InMemoryRegisteredClientRepository

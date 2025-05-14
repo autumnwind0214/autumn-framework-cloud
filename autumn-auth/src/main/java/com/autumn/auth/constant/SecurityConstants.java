@@ -1,4 +1,4 @@
-package com.autumn.common.core.constant;
+package com.autumn.auth.constant;
 
 /**
  * @author autumn
@@ -33,11 +33,6 @@ public class SecurityConstants {
     public static final String EMAIL_LOGIN_TYPE = "email_type";
 
     /**
-     * 权限在token中的key
-     */
-    public static final String AUTHORITIES_KEY = "authorities";
-
-    /**
      * 自定义登录方式
      */
     public static final String[] GRANT_TYPES = new String[]{SMS_LOGIN_TYPE, PASSWORD_LOGIN_TYPE, EMAIL_LOGIN_TYPE};
@@ -63,9 +58,9 @@ public class SecurityConstants {
     public static final String OAUTH_PARAMETER_NAME_EMAIL_CAPTCHA = "emailCaptcha";
 
     /**
-     * 用户名参数名
+     * 账号参数名
      */
-    public static final String OAUTH_PARAMETER_NAME_USERNAME = "username";
+    public static final String OAUTH_PARAMETER_NAME_ACCOUNT = "account";
 
     /**
      * 密码参数名

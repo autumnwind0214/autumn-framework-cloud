@@ -182,7 +182,7 @@ public class SecurityUtils {
     public static Long getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getName() != null) {
-            return JSONObject.parseObject(authentication.getName()).getLong("id");
+            return Long.parseLong(authentication.getName());
         }
         // 登录失效
         throw new AutumnException(ResultCodeEnum.LOGIN_INVALID);

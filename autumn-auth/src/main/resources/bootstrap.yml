@@ -31,6 +31,8 @@ spring:
         shared-configs:
           - data-id: common-mybatis.yml
             group: ${spring.profiles.active}
+          - data-id: common-oss.yml
+            group: ${spring.profiles.active}
 logging:
   level:
     org.springframework.security: debug

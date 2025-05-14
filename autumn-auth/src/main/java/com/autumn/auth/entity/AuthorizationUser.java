@@ -1,6 +1,11 @@
 package com.autumn.auth.entity;
 
+import com.alibaba.fastjson2.annotation.JSONField;
 import com.autumn.auth.model.vo.AuthorizationUserVo;
+import com.autumn.common.core.utils.AESCryptUtil;
+import com.autumn.mybatis.core.model.BaseEntity;
+import com.autumn.mybatis.handler.BooleanTypeHandler;
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -30,17 +35,11 @@ import java.util.Collection;
 @AutoMappers({
         @AutoMapper(target = AuthorizationUserVo.class)
 })
-public class AuthorizationUser implements UserDetails, Serializable {
-
-    @Serial
-    private static final long serialVersionUID = 1L;
-
-    Long id;
-
+public class AuthorizationUser extends BaseEntity implements UserDetails  {
     /**
-     * 用户名
+     * 账户
      */
-    String username;
+    String account;
 
     /**
      * 密码
@@ -63,6 +62,11 @@ public class AuthorizationUser implements UserDetails, Serializable {
     String avatar;
 
     /**
+     * 性别
+     */
+    Integer sex;
+
+    /**
      * 手机号
      */
     String mobile;
@@ -79,9 +83,10 @@ public class AuthorizationUser implements UserDetails, Serializable {
 
     /**
      * 账户是否被锁定
-     * 0: 未锁定    1: 已锁定
+     * 0: 已锁定    1: 未锁定
      */
-    Integer locked;
+    @TableField(typeHandler = BooleanTypeHandler.class)
+    Boolean locked;
 
     /**
      * 用户凭据过期时间
@@ -97,7 +102,8 @@ public class AuthorizationUser implements UserDetails, Serializable {
      * 启用状态
      * 0: 未启用    1: 已启用
      */
-    Integer enabled;
+    @TableField(typeHandler = BooleanTypeHandler.class)
+    Boolean status;
 
     /**
      * 权限信息
@@ -119,7 +125,7 @@ public class AuthorizationUser implements UserDetails, Serializable {
      */
     @Override
     public boolean isEnabled() {
-        return enabled == 1;
+        return status;
     }
 
     @Override
@@ -129,16 +135,20 @@ public class AuthorizationUser implements UserDetails, Serializable {
 
     @Override
     public String getUsername() {
-        return this.username;
+        return String.valueOf(getId());
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return true;
+        return LocalDateTime.now().isBefore(this.accountExpire);
     }
 
+    /**
+     * 指示是否已锁定此用户。锁定的用户不能身份验证
+     *
+     */
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return locked;
     }
 }
