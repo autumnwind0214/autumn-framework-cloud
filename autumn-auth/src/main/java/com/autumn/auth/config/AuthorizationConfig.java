@@ -6,6 +6,7 @@ import com.autumn.auth.authorization.grant.AutumnGrantAuthenticationProvider;
 import com.autumn.auth.authorization.handler.*;
 import com.autumn.auth.constant.SecurityConstants;
 import com.autumn.auth.properties.CustomSecurityProperties;
+import com.autumn.auth.utils.RsaKeyUtils;
 import com.autumn.auth.utils.SecurityUtils;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -374,8 +375,19 @@ public class AuthorizationConfig {
      * @return JWKSource
      */
     @Bean
-    public JWKSource<SecurityContext> jwkSource() {
-        KeyPair keyPair = generateRsaKey();
+    public JWKSource<SecurityContext> jwkSource() throws Exception {
+        // KeyPair keyPair = generateRsaKey();
+        // RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
+        // RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();
+        // RSAKey rsaKey = new RSAKey.Builder(publicKey)
+        //         .privateKey(privateKey)
+        //         .keyID(UUID.randomUUID().toString())
+        //         .build();
+        // JWKSet jwkSet = new JWKSet(rsaKey);
+        // return new ImmutableJWKSet<>(jwkSet);
+
+        // 持久化密钥
+        KeyPair keyPair = RsaKeyUtils.loadKeyPair();
         RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
         RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();
         RSAKey rsaKey = new RSAKey.Builder(publicKey)
@@ -449,7 +461,7 @@ public class AuthorizationConfig {
     }
 
     @Bean
-    public OAuth2TokenGenerator<?> tokenGenerator() {
+    public OAuth2TokenGenerator<?> tokenGenerator() throws Exception {
         JwtGenerator jwtGenerator = new JwtGenerator(new NimbusJwtEncoder(jwkSource()));
         jwtGenerator.setJwtCustomizer(oAuth2TokenCustomizer());
         OAuth2TokenGenerator<OAuth2RefreshToken> refreshTokenGenerator = new RefreshTokenGeneratorHandler();

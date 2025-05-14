@@ -48,7 +48,7 @@ public class AuthorizationUserController {
     }
 
     @GetMapping("/mine")
-    public R<AuthorizationUserVo> mine() {
+    public R<AuthorizationUserVo> getMine() {
         Long userId = SecurityUtils.getCurrentUserId();
         AuthorizationUserVo userInfoVo = authorizationUserService.getUserInfo(userId);
         return R.success(userInfoVo);
@@ -108,6 +108,11 @@ public class AuthorizationUserController {
     @PutMapping("/uploadAvatar")
     public R<Boolean> uploadAvatar(@Validated @RequestBody UserAvatarDto dto) {
         return R.success(authorizationUserService.uploadAvatar(dto));
+    }
+
+    @PutMapping("/mine")
+    public R<Boolean> putMine(@Validated(UpdateGroup.class) @RequestBody UserDto dto) {
+        return R.success(authorizationUserService.edit(dto));
     }
 
     @PreAuthorize("hasAuthority('system:user:delete')")

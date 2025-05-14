@@ -69,4 +69,6 @@ public class AuthorizationUserVo {
 
     Boolean status;
 
+    String remark;
+
 }

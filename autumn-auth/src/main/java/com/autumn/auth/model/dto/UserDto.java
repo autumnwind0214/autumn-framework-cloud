@@ -69,4 +69,9 @@ public class UserDto {
      */
     private Boolean status;
 
+    /**
+     * 个人简介
+     */
+    private String remark;
+
 }
