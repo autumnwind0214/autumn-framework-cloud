@@ -47,7 +47,10 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
         Long userId = SecurityUtils.getCurrentUserId();
         String key = RedisConstant.ASYNC_ROUTES_PREFIX_KEY + userId;
         if (redisOperator.containKey(key)) {
-            return redisOperator.get(key);
+            List<RouteVo> routeVos = redisOperator.get(key);
+            if (!CollectionUtils.isEmpty(routeVos)) {
+                return routeVos;
+            }
         }
         return getRouteList(userId);
     }

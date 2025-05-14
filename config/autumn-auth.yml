@@ -1,0 +1,48 @@
+feign:
+  sentinel:
+    enabled: true
+spring:
+  main:
+    allow-bean-definition-overriding: true #当遇到同样名字的时候，是否允许覆盖注册
+  security:
+    oauth2:
+      authorization-server:
+        issuer-uri: http://127.0.0.1:11000
+  cloud:
+    openfeign:
+      lazy-attributes-resolution: true #开启懒加载，否则启动报错
+      client:
+        config:
+          default:
+            connectTimeout: 30000
+            readTimeout: 30000
+            loggerLevel: basic
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/autumn_auth?characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: root
+    hikari:
+      connection-test-query: SELECT 1
+      connection-timeout: 60000
+      idle-timeout: 500000
+      max-lifetime: 540000
+      maximum-pool-size: 10
+      minimum-idle: 5
+      pool-name: GuliHikariPool
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+
+custom:
+  # 自定义认证配置
+  security:
+    # 不需要认证的地址
+    ignore-uri-list: assets/**, /webjars/**, /login, /getCaptcha, /getSmsCaptcha/**, /getEmailCaptcha/**, /error, /oauth2/authorize, /oauth2/token
+    # 当前认证服务访问的路径
+    issuer-url: http://127.0.0.1:11000
+    # 后端登录页面访问路径
+    login-url: http://127.0.0.1:9999/login
+    # 退出登录端口
+    logout-url: /logout

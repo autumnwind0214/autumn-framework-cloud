@@ -1,0 +1,6 @@
+oss:
+  minio:
+    endpoint: http://60.205.234.52:9000
+    accessKey: OQkU48H3tWMZcMh5B1UD
+    secretKey: AreomCLBRZQVpQSCcjTHvftsrOjq83rszcrnO4KO
+    mediaBucket: autumn-media
