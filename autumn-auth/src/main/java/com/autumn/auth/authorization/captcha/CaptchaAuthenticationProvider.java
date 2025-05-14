@@ -83,6 +83,10 @@ public class CaptchaAuthenticationProvider extends DaoAuthenticationProvider {
         }
 
         log.info("Captcha authenticated.");
-        return super.authenticate(authentication);
+        try {
+            return super.authenticate(authentication);
+        } catch (Exception e) {
+            throw new AutumnException(ResultCodeEnum.AUTHENTICATION_FAILED);
+        }
     }
 }
