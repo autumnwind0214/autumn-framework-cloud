@@ -67,7 +67,7 @@ public class AuthorizationUserServiceImpl extends ServiceImpl<AuthorizationUserM
         }
         AuthorizationUser authorizationUser = authorizationUserMapper.selectOne(wrapper);
         if (authorizationUser == null) {
-            throw new UsernameNotFoundException(username);
+            throw new UsernameNotFoundException(ResultCodeEnum.ACCOUNT_NOT_EXIST.getMessage());
         } else {
             // 更新登录时间
             authorizationUser.setLoginTime(LocalDateTime.now());
@@ -96,7 +96,7 @@ public class AuthorizationUserServiceImpl extends ServiceImpl<AuthorizationUserM
     @Override
     public Boolean add(UserDto dto) {
         // 用户昵称和用户名不能重复
-        if (checkDuplicateAccounts(null, dto.getUsername(), dto.getNickname())) {
+        if (checkDuplicateAccounts(dto)) {
             throw new AutumnException(ResultCodeEnum.DUPLICATE_ACCOUNTS);
         }
 
@@ -110,7 +110,7 @@ public class AuthorizationUserServiceImpl extends ServiceImpl<AuthorizationUserM
     @Override
     public Boolean edit(UserDto dto) {
         // 用户昵称和用户名不能重复
-        if (checkDuplicateAccounts(dto.getId(), dto.getUsername(), dto.getNickname())) {
+        if (checkDuplicateAccounts(dto)) {
             throw new AutumnException(ResultCodeEnum.DUPLICATE_ACCOUNTS);
         }
         AuthorizationUser authorizationUser = MapstructUtils.convert(dto, AuthorizationUser.class);
@@ -165,17 +165,21 @@ public class AuthorizationUserServiceImpl extends ServiceImpl<AuthorizationUserM
 
     /**
      * 检查用户名或昵称是否重复
-     *
-     * @param id       id
-     * @param username 用户名
-     * @param nickname 昵称
      * @return true 表示重复，false 表示不重复
      */
-    private boolean checkDuplicateAccounts(Long id, String username, String nickname) {
+    private boolean checkDuplicateAccounts(UserDto dto) {
         LambdaQueryWrapper<AuthorizationUser> wrapper = new LambdaQueryWrapper<>();
-        wrapper.and(w -> w.eq(AuthorizationUser::getUsername, username).or().eq(AuthorizationUser::getNickname, nickname));
-        if (id != null) {
-            wrapper.and(w -> w.ne(AuthorizationUser::getId, id));
+        wrapper.and(w -> w
+                .eq(AuthorizationUser::getAccount, dto.getAccount())
+                .or()
+                .eq(AuthorizationUser::getNickname, dto.getNickname())
+                .or()
+                .eq(AuthorizationUser::getMobile, dto.getMobile())
+                .or()
+                .eq(AuthorizationUser::getEmail, dto.getEmail())
+        );
+        if (dto.getId() != null) {
+            wrapper.and(w -> w.ne(AuthorizationUser::getId, dto.getId()));
         }
         return count(wrapper) > 0;
     }

@@ -44,7 +44,7 @@ public class RevokeAccessTokenLogoutHandler implements LogoutHandler {
     @SneakyThrows
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         // 获取token(可以是Access Token，也可以是Refresh Token)
-        String token = request.getParameter(OAuth2ParameterNames.TOKEN);
+        String token = request.getHeader("Authorization");
         if (ObjectUtils.isEmpty(token)) {
             // 写回json数据
             R<String> result = R.fail("token is empty");

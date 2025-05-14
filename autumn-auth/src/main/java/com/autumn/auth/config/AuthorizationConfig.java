@@ -181,6 +181,8 @@ public class AuthorizationConfig {
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http,
                                                           ServerProperties serverProperties,
                                                           AuthorizationServerSettings authorizationServerSettings) throws Exception {
+        http.csrf(AbstractHttpConfigurer::disable);
+        http.cors(AbstractHttpConfigurer::disable);
         http
                 // 当未登录时访问认证端点时重定向至login页面
                 .exceptionHandling((exceptions) -> exceptions

@@ -94,6 +94,12 @@ public class AuthorizationUser extends BaseEntity implements UserDetails  {
     LocalDateTime credentialExpire;
 
     /**
+     * 生日
+     */
+    @JSONField(format = "yyyy-MM-dd")
+    LocalDateTime birthday;
+
+    /**
      * 登录时间
      */
     LocalDateTime loginTime;

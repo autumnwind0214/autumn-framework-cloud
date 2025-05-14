@@ -4,6 +4,8 @@ package com.autumn.auth.authorization.grant;
 import com.autumn.auth.constant.SecurityConstants;
 import com.autumn.auth.local.GrantThreadLocal;
 import com.autumn.auth.utils.SecurityUtils;
+import com.autumn.common.core.exception.AutumnException;
+import com.autumn.common.core.result.ResultCodeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -11,7 +13,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.core.*;
-import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.core.oidc.OidcIdToken;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
 import org.springframework.security.oauth2.core.oidc.endpoint.OidcParameterNames;
@@ -28,6 +29,7 @@ import org.springframework.security.oauth2.server.authorization.token.OAuth2Toke
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenGenerator;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 import java.security.Principal;
 import java.util.HashMap;
@@ -192,10 +194,7 @@ public class AutumnGrantAuthenticationProvider implements AuthenticationProvider
                     .filter(requestedScope -> !registeredClient.getScopes().contains(requestedScope))
                     .collect(Collectors.toSet());
             if (!ObjectUtils.isEmpty(unauthorizedScopes)) {
-                SecurityUtils.throwError(
-                        OAuth2ErrorCodes.INVALID_REQUEST,
-                        "OAuth 2.0 Parameter: " + OAuth2ParameterNames.SCOPE,
-                        ERROR_URI);
+                throw new AutumnException(ResultCodeEnum.AUTHENTICATION_FAILED);
             }
 
             authorizedScopes = new LinkedHashSet<>(requestedScopes);
@@ -248,13 +247,14 @@ public class AutumnGrantAuthenticationProvider implements AuthenticationProvider
                 unauthenticated = UsernamePasswordAuthenticationToken.unauthenticated(authenticationToken.getPrincipal(), authenticationToken.getCredentials());
             }
         }
+
         try {
             authenticate = authenticationManager.authenticate(unauthenticated);
         } catch (Exception e) {
             log.error("Authentication failed.", e);
             SecurityUtils.throwError(
                     OAuth2ErrorCodes.INVALID_REQUEST,
-                    "认证失败.",
+                    StringUtils.hasText(e.getMessage()) ? e.getMessage() : "认证失败",
                     ERROR_URI
             );
         } finally {

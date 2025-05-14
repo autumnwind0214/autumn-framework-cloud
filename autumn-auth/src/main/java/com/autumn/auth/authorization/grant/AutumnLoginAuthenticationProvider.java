@@ -3,9 +3,11 @@ package com.autumn.auth.authorization.grant;
 
 import com.autumn.auth.authorization.captcha.CaptchaAuthenticationProvider;
 import com.autumn.auth.constant.SecurityConstants;
+import com.autumn.auth.exception.InvalidCaptchaException;
+import com.autumn.common.core.exception.AutumnException;
+import com.autumn.common.core.result.ResultCodeEnum;
 import com.autumn.common.redis.constant.RedisConstant;
 import com.autumn.common.redis.core.RedisOperator;
-import com.autumn.auth.exception.InvalidCaptchaException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -52,13 +54,13 @@ public class AutumnLoginAuthenticationProvider extends CaptchaAuthenticationProv
 
         if (authentication.getCredentials() == null) {
             this.logger.debug("Failed to authenticate since no credentials provided");
-            throw new BadCredentialsException("The sms captcha cannot be empty.");
+            throw new BadCredentialsException(ResultCodeEnum.CAPTCHA_NOT_EMPTY.getMessage());
         }
 
         // 获取当前request
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
         if (requestAttributes == null) {
-            throw new InvalidCaptchaException("Failed to get the current request.");
+            throw new BadCredentialsException(ResultCodeEnum.BAD_REQUEST.getMessage());
         }
         HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
 
@@ -72,15 +74,13 @@ public class AutumnLoginAuthenticationProvider extends CaptchaAuthenticationProv
         if (Objects.equals(grantType, SecurityConstants.SMS_LOGIN_TYPE)) {
             String captcha = redisOperator.get(RedisConstant.SMS_CAPTCHA_PREFIX_KEY + authentication.getPrincipal());
             if (!Objects.equals(captcha, authentication.getCredentials())) {
-                throw new BadCredentialsException("The sms captcha is incorrect.");
+                throw new InvalidCaptchaException(ResultCodeEnum.CAPTCHA_INCORRECT);
             }
-            redisOperator.delete(RedisConstant.SMS_CAPTCHA_PREFIX_KEY + authentication.getPrincipal());
         } else if (Objects.equals(grantType, SecurityConstants.EMAIL_LOGIN_TYPE)) {
             String captcha = redisOperator.get(RedisConstant.EMAIL_CAPTCHA_PREFIX_KEY + authentication.getPrincipal());
             if (!Objects.equals(captcha, authentication.getCredentials())) {
-                throw new BadCredentialsException("The email captcha is incorrect.");
+                throw new InvalidCaptchaException(ResultCodeEnum.CAPTCHA_INCORRECT);
             }
-            redisOperator.delete(RedisConstant.SMS_CAPTCHA_PREFIX_KEY + authentication.getPrincipal());
         } else {
             log.info("Not sms captcha loginType, exit.");
             // 其它调用父类默认实现的密码方式登录

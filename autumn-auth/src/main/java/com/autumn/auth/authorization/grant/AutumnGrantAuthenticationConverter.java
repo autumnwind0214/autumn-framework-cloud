@@ -3,6 +3,8 @@ package com.autumn.auth.authorization.grant;
 
 import com.autumn.auth.constant.SecurityConstants;
 import com.autumn.auth.utils.SecurityUtils;
+import com.autumn.common.core.exception.AutumnException;
+import com.autumn.common.core.result.ResultCodeEnum;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -40,17 +42,12 @@ public class AutumnGrantAuthenticationConverter implements AuthenticationConvert
 
         // scope (OPTIONAL)
         String scope = parameters.getFirst(OAuth2ParameterNames.SCOPE);
-        if (StringUtils.hasText(scope) &&
-                parameters.get(OAuth2ParameterNames.SCOPE).size() != 1) {
-            SecurityUtils.throwError(
-                    OAuth2ErrorCodes.INVALID_REQUEST,
-                    "OAuth 2.0 Parameter: " + OAuth2ParameterNames.SCOPE,
-                    ACCESS_TOKEN_REQUEST_ERROR_URI);
+        if (StringUtils.hasText(scope) && parameters.get(OAuth2ParameterNames.SCOPE).size() != 1) {
+            throw new AutumnException(ResultCodeEnum.SCOPE_NOT_EMPTY);
         }
         Set<String> requestedScopes = null;
         if (StringUtils.hasText(scope)) {
-            requestedScopes = new HashSet<>(
-                    Arrays.asList(StringUtils.delimitedListToStringArray(scope, " ")));
+            requestedScopes = new HashSet<>(Arrays.asList(StringUtils.delimitedListToStringArray(scope, " ")));
         }
 
         parameterVerification(parameters, grantType);
@@ -74,63 +71,41 @@ public class AutumnGrantAuthenticationConverter implements AuthenticationConvert
                 // Mobile phone number (REQUIRED)
                 String phone = parameters.getFirst(SecurityConstants.OAUTH_PARAMETER_NAME_PHONE);
                 if (!StringUtils.hasText(phone) || parameters.get(SecurityConstants.OAUTH_PARAMETER_NAME_PHONE).size() != 1) {
-                    SecurityUtils.throwError(
-                            OAuth2ErrorCodes.INVALID_REQUEST,
-                            "OAuth 2.0 Parameter: " + SecurityConstants.OAUTH_PARAMETER_NAME_PHONE,
-                            ACCESS_TOKEN_REQUEST_ERROR_URI);
+                    throw new AutumnException(ResultCodeEnum.MOBILE_NOT_EMPTY);
                 }
 
                 // SMS verification code (REQUIRED)
                 String smsCode = parameters.getFirst(SecurityConstants.OAUTH_PARAMETER_NAME_PHONE_CAPTCHA);
                 if (!StringUtils.hasText(smsCode) || parameters.get(SecurityConstants.OAUTH_PARAMETER_NAME_PHONE_CAPTCHA).size() != 1) {
-                    SecurityUtils.throwError(
-                            OAuth2ErrorCodes.INVALID_REQUEST,
-                            "OAuth 2.0 Parameter: " + SecurityConstants.OAUTH_PARAMETER_NAME_PHONE_CAPTCHA,
-                            ACCESS_TOKEN_REQUEST_ERROR_URI);
+                    throw new AutumnException(ResultCodeEnum.CAPTCHA_NOT_EMPTY);
                 }
             }
             case (SecurityConstants.EMAIL_LOGIN_TYPE) -> {
                 // Email (REQUIRED)
                 String email = parameters.getFirst(SecurityConstants.OAUTH_PARAMETER_NAME_EMAIL);
                 if (!StringUtils.hasText(email) || parameters.get(SecurityConstants.OAUTH_PARAMETER_NAME_EMAIL).size() != 1) {
-                    SecurityUtils.throwError(
-                            OAuth2ErrorCodes.INVALID_REQUEST,
-                            "OAuth 2.0 Parameter: " + SecurityConstants.OAUTH_PARAMETER_NAME_EMAIL,
-                            ACCESS_TOKEN_REQUEST_ERROR_URI);
+                    throw new AutumnException(ResultCodeEnum.EMAIL_NOT_EMPTY);
                 }
                 // Email verification code (REQUIRED)
                 String emailCode = parameters.getFirst(SecurityConstants.OAUTH_PARAMETER_NAME_EMAIL_CAPTCHA);
                 if (!StringUtils.hasText(emailCode) || parameters.get(SecurityConstants.OAUTH_PARAMETER_NAME_EMAIL_CAPTCHA).size() != 1) {
-                    SecurityUtils.throwError(
-                            OAuth2ErrorCodes.INVALID_REQUEST,
-                            "OAuth 2.0 Parameter: " + SecurityConstants.OAUTH_PARAMETER_NAME_EMAIL_CAPTCHA,
-                            ACCESS_TOKEN_REQUEST_ERROR_URI);
+                    throw new AutumnException(ResultCodeEnum.CAPTCHA_NOT_EMPTY);
                 }
             }
             case (SecurityConstants.PASSWORD_LOGIN_TYPE) -> {
                 // Username (REQUIRED)
-                String username = parameters.getFirst(SecurityConstants.OAUTH_PARAMETER_NAME_ACCOUNT);
-                if (!StringUtils.hasText(username) || parameters.get(SecurityConstants.OAUTH_PARAMETER_NAME_ACCOUNT).size() != 1) {
-                    SecurityUtils.throwError(
-                            OAuth2ErrorCodes.INVALID_REQUEST,
-                            "OAuth 2.0 Parameter: " + SecurityConstants.OAUTH_PARAMETER_NAME_ACCOUNT,
-                            ACCESS_TOKEN_REQUEST_ERROR_URI);
+                String account = parameters.getFirst(SecurityConstants.OAUTH_PARAMETER_NAME_ACCOUNT);
+                if (!StringUtils.hasText(account) || parameters.get(SecurityConstants.OAUTH_PARAMETER_NAME_ACCOUNT).size() != 1) {
+                    throw new AutumnException(ResultCodeEnum.ACCOUNT_NOT_EMPTY);
                 }
                 String password = parameters.getFirst(SecurityConstants.OAUTH_PARAMETER_NAME_PASSWORD);
                 if (!StringUtils.hasText(password) || parameters.get(SecurityConstants.OAUTH_PARAMETER_NAME_PASSWORD).size() != 1) {
-                    SecurityUtils.throwError(
-                            OAuth2ErrorCodes.INVALID_REQUEST,
-                            "OAuth 2.0 Parameter: " + SecurityConstants.OAUTH_PARAMETER_NAME_PASSWORD,
-                            ACCESS_TOKEN_REQUEST_ERROR_URI
-                    );
+                    throw new AutumnException(ResultCodeEnum.PASSWORD_NOT_EMPTY);
                 }
             }
             default -> {
-                SecurityUtils.throwError(
-                        OAuth2ErrorCodes.UNAUTHORIZED_CLIENT,
-                        "Unauthorized grant type: " + grantType,
-                        ACCESS_TOKEN_REQUEST_ERROR_URI
-                );
+                // 不支持的登录方式
+                throw new AutumnException(ResultCodeEnum.UNSUPPORTED_LOGIN_TYPE);
             }
         }
     }

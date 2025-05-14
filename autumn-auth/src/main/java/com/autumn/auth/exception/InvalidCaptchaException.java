@@ -1,5 +1,6 @@
 package com.autumn.auth.exception;
 
+import com.autumn.common.core.result.ResultCodeEnum;
 import org.springframework.security.core.AuthenticationException;
 
 /**
@@ -8,7 +9,8 @@ import org.springframework.security.core.AuthenticationException;
  * @date 2025年05月13日
  */
 public class InvalidCaptchaException extends AuthenticationException {
-    public InvalidCaptchaException(String msg) {
-        super(msg);
+
+    public InvalidCaptchaException(ResultCodeEnum resultCodeEnum) {
+        super(resultCodeEnum.getMessage());
     }
 }

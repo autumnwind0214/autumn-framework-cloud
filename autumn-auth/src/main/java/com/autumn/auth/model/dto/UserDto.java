@@ -34,7 +34,7 @@ public class UserDto {
      * 用户名
      */
     @NotBlank(groups = {InsertGroup.class, UpdateGroup.class}, message = "用户名不能为空")
-    private String username;
+    private String account;
     /**
      * 密码
      */
@@ -50,7 +50,7 @@ public class UserDto {
     /**
      * 手机号
      */
-    private String phone;
+    private String mobile;
     /**
      * 昵称
      */

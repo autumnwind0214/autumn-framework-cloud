@@ -32,7 +32,7 @@ public class CustomSecurityProperties {
     /**
      * 退出登录跳转页面
      */
-    private String logoutUrl = "/login";
+    private String logoutUrl = "/logout";
 
     /**
      * 授权确认页面

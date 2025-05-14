@@ -36,9 +36,8 @@ public class AuthorizationUserController {
 
     private final IUserRoleService userRoleService;
 
-    @GetMapping
-    public R<AuthorizationUserVo> getUserInfo() {
-        Long userId = SecurityUtils.getCurrentUserId();
+    @GetMapping("/{userId}")
+    public R<AuthorizationUserVo> getUserInfo(@PathVariable Long userId) {
         AuthorizationUserVo userInfoVo = authorizationUserService.getUserInfo(userId);
         return R.success(userInfoVo);
     }
@@ -46,6 +45,13 @@ public class AuthorizationUserController {
     @GetMapping("/roleIds/{userId}")
     public R<Long[]> getRoleIds(@PathVariable Long userId) {
         return R.success(authorizationUserService.getRoleIds(userId));
+    }
+
+    @GetMapping("/mine")
+    public R<AuthorizationUserVo> mine() {
+        Long userId = SecurityUtils.getCurrentUserId();
+        AuthorizationUserVo userInfoVo = authorizationUserService.getUserInfo(userId);
+        return R.success(userInfoVo);
     }
 
     @Sensitive
@@ -72,7 +78,7 @@ public class AuthorizationUserController {
     @PreAuthorize("hasAuthority('system:user:edit')")
     @PutMapping
     public R<Boolean> edit(@Validated(UpdateGroup.class) @RequestBody UserDto dto) {
-        if (dto.getId().equals(1L) && !"admin".equals(dto.getUsername())) {
+        if (dto.getId().equals(1L) && !"admin".equals(dto.getAccount())) {
             return R.fail("禁止修改超级管理员用户名");
         }
         return R.success(authorizationUserService.edit(dto));

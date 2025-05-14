@@ -1,9 +1,11 @@
 package com.autumn.auth.authorization.captcha;
 
 import com.autumn.auth.constant.SecurityConstants;
+import com.autumn.auth.exception.InvalidCaptchaException;
+import com.autumn.common.core.exception.AutumnException;
+import com.autumn.common.core.result.ResultCodeEnum;
 import com.autumn.common.redis.constant.RedisConstant;
 import com.autumn.common.redis.core.RedisOperator;
-import com.autumn.auth.exception.InvalidCaptchaException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -50,7 +52,7 @@ public class CaptchaAuthenticationProvider extends DaoAuthenticationProvider {
         // 获取当前request
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
         if (requestAttributes == null) {
-            throw new InvalidCaptchaException("Failed to get the current request.");
+            throw new InvalidCaptchaException(ResultCodeEnum.BAD_REQUEST);
         }
         HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
 
@@ -65,7 +67,7 @@ public class CaptchaAuthenticationProvider extends DaoAuthenticationProvider {
         // 获取参数中的验证码
         String code = request.getParameter(SecurityConstants.OAUTH_PARAMETER_NAME_CODE);
         if (ObjectUtils.isEmpty(code)) {
-            throw new InvalidCaptchaException("The captcha cannot be empty.");
+            throw new InvalidCaptchaException(ResultCodeEnum.CAPTCHA_NOT_EMPTY);
         }
 
         String captchaId = request.getParameter(SecurityConstants.OAUTH_PARAMETER_NAME_CAPTCHA);
@@ -73,11 +75,11 @@ public class CaptchaAuthenticationProvider extends DaoAuthenticationProvider {
         String captchaCode = redisOperator.get((RedisConstant.IMAGE_CAPTCHA_PREFIX_KEY + captchaId));
         if (!ObjectUtils.isEmpty(captchaCode)) {
             if (!captchaCode.equalsIgnoreCase(code)) {
-                throw new InvalidCaptchaException("The captcha is incorrect.");
+                throw new InvalidCaptchaException(ResultCodeEnum.CAPTCHA_INCORRECT);
             }
             redisOperator.delete(RedisConstant.IMAGE_CAPTCHA_PREFIX_KEY + captchaId);
         } else {
-            throw new InvalidCaptchaException("The captcha is abnormal. Obtain it again.");
+            throw new InvalidCaptchaException(ResultCodeEnum.CAPTCHA_NOT_EXPIRED);
         }
 
         log.info("Captcha authenticated.");
