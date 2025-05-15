@@ -5,6 +5,7 @@ import com.alicp.jetcache.Cache;
 import com.alicp.jetcache.CacheManager;
 import com.alicp.jetcache.anno.CacheType;
 import com.alicp.jetcache.template.QuickConfig;
+import com.autumn.auth.entity.AuthorizationUser;
 import com.autumn.auth.entity.Menu;
 import com.autumn.auth.enums.MenuTypeEnum;
 import com.autumn.auth.mapper.MenuMapper;
@@ -13,6 +14,7 @@ import com.autumn.auth.model.dto.MenuDto;
 import com.autumn.auth.model.vo.MenuVo;
 import com.autumn.auth.model.vo.RoleMenuVo;
 import com.autumn.auth.model.vo.RouteVo;
+import com.autumn.auth.service.IAuthorizationUserService;
 import com.autumn.auth.service.IMenuService;
 import com.autumn.auth.utils.SecurityUtils;
 import com.autumn.common.core.utils.BeanCopyUtils;
@@ -50,6 +52,8 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
     private final CacheManager cacheManager;
 
     private Cache<String, List<RouteVo>> routeVoCache;
+
+    private final IAuthorizationUserService authorizationUserService;
 
     @PostConstruct
     public void init() {
@@ -131,11 +135,15 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
      */
     @Override
     public void updateRoutesCache() {
-        Long userId = SecurityUtils.getCurrentUserId();
-        List<RouteVo> list = getRouteList(userId);
-        String key = RedisConstant.ASYNC_ROUTES_PREFIX_KEY + userId;
-        redisOperator.delete(key);
-        redisOperator.listPush(key, list);
+        LambdaQueryWrapper<AuthorizationUser> wrapper = new LambdaQueryWrapper<>();
+        wrapper.select(AuthorizationUser::getId);
+        authorizationUserService.list(wrapper).forEach(user -> {
+            String key = RedisConstant.ASYNC_ROUTES_PREFIX_KEY + user.getId();
+            if(!CollectionUtils.isEmpty(routeVoCache.get(key))) {
+                List<RouteVo> list = getRouteList(user.getId());
+                routeVoCache.put(key, list);
+            }
+        });
     }
 
     private List<RouteVo> getRouteList(Long userId) {

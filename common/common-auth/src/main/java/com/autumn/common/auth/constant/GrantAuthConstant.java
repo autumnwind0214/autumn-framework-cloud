@@ -11,4 +11,6 @@ public class GrantAuthConstant {
      * 权限在token中的key
      */
     public static final String AUTHORITIES_KEY = "authorities";
+
+    public static final String AUTHORITIES_ROLE_ID_KEY = "roleIds";
 }

@@ -24,6 +24,13 @@ public interface UserRoleMapper extends BaseMapper<UserRole> {
     List<Long> queryMenuIdByUserId(@Param("userId")Long userId);
 
     /**
+     * 根据角色ids查询菜单
+     * @param roleIds 角色id集合
+     * @return 菜单集合
+     */
+    List<Long> queryMenuIdByRoleIds(@Param("roleIds")List<Long> roleIds);
+
+    /**
      * 根据用户id查询权限
      * @param userId 用户id
      * @return 权限集合

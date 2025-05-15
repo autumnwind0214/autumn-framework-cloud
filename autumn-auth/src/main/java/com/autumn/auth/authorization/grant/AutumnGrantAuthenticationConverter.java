@@ -94,9 +94,9 @@ public class AutumnGrantAuthenticationConverter implements AuthenticationConvert
             }
             case (SecurityConstants.PASSWORD_LOGIN_TYPE) -> {
                 // Username (REQUIRED)
-                String account = parameters.getFirst(SecurityConstants.OAUTH_PARAMETER_NAME_ACCOUNT);
-                if (!StringUtils.hasText(account) || parameters.get(SecurityConstants.OAUTH_PARAMETER_NAME_ACCOUNT).size() != 1) {
-                    throw new AutumnException(ResultCodeEnum.ACCOUNT_NOT_EMPTY);
+                String username = parameters.getFirst(SecurityConstants.OAUTH_PARAMETER_NAME_USERNAME);
+                if (!StringUtils.hasText(username) || parameters.get(SecurityConstants.OAUTH_PARAMETER_NAME_USERNAME).size() != 1) {
+                    throw new AutumnException(ResultCodeEnum.USERNAME_NOT_EMPTY);
                 }
                 String password = parameters.getFirst(SecurityConstants.OAUTH_PARAMETER_NAME_PASSWORD);
                 if (!StringUtils.hasText(password) || parameters.get(SecurityConstants.OAUTH_PARAMETER_NAME_PASSWORD).size() != 1) {

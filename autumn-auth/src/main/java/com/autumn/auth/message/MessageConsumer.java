@@ -1,7 +1,10 @@
-package com.autumn.common.rabbitmq.message;
+package com.autumn.auth.message;
 
+import com.autumn.auth.config.RabbitMqConfig;
+import com.autumn.auth.service.IMenuService;
 import com.autumn.common.rabbitmq.constant.RabbitMqConstant;
 import com.rabbitmq.client.Channel;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -14,12 +17,15 @@ import java.io.IOException;
  * @desc 消息处理服务
  * @date 2025年05月07日
  */
-@Service
 @Slf4j
+@Service
+@RequiredArgsConstructor
 public class MessageConsumer {
 
-    @RabbitListener(queues = RabbitMqConstant.BUSINESS_QUEUE, ackMode = "MANUAL")
-    public void handleMessage(Message message, Channel channel) throws IOException {
+    private final IMenuService menuService;
+
+    @RabbitListener(queues = RabbitMqConfig.MENU_QUEUE, ackMode = "MANUAL")
+    public void handleMenuMessage(Message message, Channel channel) throws IOException {
         long deliveryTag = message.getMessageProperties().getDeliveryTag();
 
         try {
@@ -28,12 +34,11 @@ public class MessageConsumer {
             log.info("收到消息: message={}, deliveryTag={}", messageBody, deliveryTag);
 
             // 业务处理
-            processMessage(messageBody);
+            menuService.updateRoutesCache();
 
             // 手动确认消息
             channel.basicAck(deliveryTag, false);
             log.info("消息处理成功: deliveryTag={}", deliveryTag);
-
         } catch (Exception e) {
             log.error("消息处理异常: deliveryTag={}, error={}", deliveryTag, e.getMessage());
 

@@ -1,10 +1,10 @@
-package com.autumn.common.rabbitmq.message;
+package com.autumn.auth.message;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.MessagePostProcessor;
 import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -16,14 +16,14 @@ import java.util.UUID;
  */
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class MessageProducer {
 
-    @Autowired
-    private RabbitTemplate rabbitTemplate;
+    private final RabbitTemplate rabbitTemplate;
 
     public void sendMessage(Object message, String exchange, String routingKey) {
-        CorrelationData correlationData = new CorrelationData(UUID.randomUUID().toString());
-
+        String messageId = UUID.randomUUID().toString();
+        CorrelationData correlationData = new CorrelationData(messageId);
         try {
             rabbitTemplate.convertAndSend(exchange, routingKey, message, correlationData);
             log.info("消息发送成功: message={}, exchange={}, routingKey={}, correlationData={}",

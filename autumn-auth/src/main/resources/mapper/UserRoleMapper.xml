@@ -14,6 +14,17 @@
         WHERE
             user_id = #{userId}
     </select>
+
+    <select id="queryMenuIdByRoleIds" resultType="long">
+        SELECT DISTINCT (rm.menu_id)
+        FROM user_role ur
+        LEFT JOIN role_menu rm ON ur.role_id = rm.role_id
+        WHERE ur.role_id IN
+        <foreach collection="roleIds" item="roleId" open="(" separator="," close=")">
+            #{roleId}
+        </foreach>
+    </select>
+
     <select id="queryPermissionByUserId" resultType="java.lang.String">
         SELECT DISTINCT(menu.auths)
         FROM user_role

@@ -35,11 +35,11 @@ import java.util.Collection;
 @AutoMappers({
         @AutoMapper(target = AuthorizationUserVo.class)
 })
-public class AuthorizationUser extends BaseEntity implements UserDetails  {
+public class AuthorizationUser extends BaseEntity {
     /**
      * 账户
      */
-    String account;
+    String username;
 
     /**
      * 密码
@@ -110,51 +110,4 @@ public class AuthorizationUser extends BaseEntity implements UserDetails  {
      */
     @TableField(typeHandler = BooleanTypeHandler.class)
     Boolean status;
-
-    /**
-     * 权限信息
-     * 非数据库字段
-     */
-    @TableField(exist = false)
-    private Collection<? extends GrantedAuthority> authorities;
-
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return LocalDateTime.now().isBefore(this.credentialExpire);
-    }
-
-    /**
-     * 指示是否已启用此用户。禁用的用户不能身份验证
-     *
-     * @return true: 已启用    false: 未启用
-     */
-    @Override
-    public boolean isEnabled() {
-        return status;
-    }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.authorities;
-    }
-
-    @Override
-    public String getUsername() {
-        return String.valueOf(getId());
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return LocalDateTime.now().isBefore(this.accountExpire);
-    }
-
-    /**
-     * 指示是否已锁定此用户。锁定的用户不能身份验证
-     *
-     */
-    @Override
-    public boolean isAccountNonLocked() {
-        return locked;
-    }
 }

@@ -1,4 +1,4 @@
-package com.autumn.common.rabbitmq.message;
+package com.autumn.auth.message;
 
 import com.autumn.common.rabbitmq.constant.RabbitMqConstant;
 import com.rabbitmq.client.Channel;

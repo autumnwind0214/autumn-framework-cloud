@@ -20,7 +20,7 @@ import java.util.Map;
  */
 @Configuration
 @EnableRabbit
-public class RabbitMqConfig {
+public class RabbitMqCoreConfig {
 
     /**
      * 业务交换机

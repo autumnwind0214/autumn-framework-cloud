@@ -1,8 +1,10 @@
 package com.autumn.auth.authorization.federation;
 
 import com.autumn.auth.constant.SecurityConstants;
+import com.autumn.auth.entity.AuthorizationUser;
 import com.autumn.auth.model.auth.BasicOAuth2User;
 import com.autumn.auth.model.auth.BasicOidcUser;
+import com.autumn.auth.model.vo.AuthorizationUserVo;
 import com.autumn.common.auth.constant.GrantAuthConstant;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -102,5 +104,8 @@ public class FederatedIdentityIdTokenCustomizer implements OAuth2TokenCustomizer
                 .map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
         JwtClaimsSet.Builder claims = context.getClaims();
         claims.claim(GrantAuthConstant.AUTHORITIES_KEY, collect);
+        AuthorizationUserVo user = (AuthorizationUserVo)context.getPrincipal().getPrincipal();
+        claims.claim(GrantAuthConstant.AUTHORITIES_ROLE_ID_KEY,user.getRoleIds());
+
     }
 }

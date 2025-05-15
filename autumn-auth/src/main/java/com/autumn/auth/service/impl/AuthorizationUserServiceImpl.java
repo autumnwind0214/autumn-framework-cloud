@@ -19,6 +19,7 @@ import com.autumn.common.core.utils.MapstructUtils;
 import com.autumn.common.oss.client.OssClient;
 import com.autumn.common.oss.result.OSSResult;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * @author autumn
@@ -62,16 +64,21 @@ public class AuthorizationUserServiceImpl extends ServiceImpl<AuthorizationUserM
                 wrapper.eq(AuthorizationUser::getMobile, username);
             }
             default -> {
-                wrapper.eq(AuthorizationUser::getAccount, username);
+                wrapper.eq(AuthorizationUser::getUsername, username);
             }
         }
-        AuthorizationUser authorizationUser = authorizationUserMapper.selectOne(wrapper);
+        AuthorizationUserVo authorizationUser = authorizationUserMapper.selectVoOne(wrapper);
         if (authorizationUser == null) {
             throw new UsernameNotFoundException(ResultCodeEnum.ACCOUNT_NOT_EXIST.getMessage());
         } else {
             // 更新登录时间
             authorizationUser.setLoginTime(LocalDateTime.now());
-            authorizationUserMapper.updateById(authorizationUser);
+            authorizationUserMapper.update(new LambdaUpdateWrapper<AuthorizationUser>()
+                    .set(AuthorizationUser::getLoginTime, LocalDateTime.now())
+                    .eq(AuthorizationUser::getId, authorizationUser.getId()));
+            // 用户角色id
+            List<Long> roleIds = userRoleMapper.queryRoleIdsByUserId(authorizationUser.getId());
+            authorizationUser.setRoleIds(roleIds);
             // 用户权限
             Collection<CustomGrantedAuthority> authorities = new ArrayList<>();
             userRoleMapper.queryPermissionByUserId(authorizationUser.getId()).forEach(item -> {
@@ -165,12 +172,13 @@ public class AuthorizationUserServiceImpl extends ServiceImpl<AuthorizationUserM
 
     /**
      * 检查用户名或昵称是否重复
+     *
      * @return true 表示重复，false 表示不重复
      */
     private boolean checkDuplicateAccounts(UserDto dto) {
         LambdaQueryWrapper<AuthorizationUser> wrapper = new LambdaQueryWrapper<>();
         wrapper.and(w -> w
-                .eq(AuthorizationUser::getAccount, dto.getAccount())
+                .eq(AuthorizationUser::getUsername, dto.getUsername())
                 .or()
                 .eq(AuthorizationUser::getNickname, dto.getNickname())
                 .or()

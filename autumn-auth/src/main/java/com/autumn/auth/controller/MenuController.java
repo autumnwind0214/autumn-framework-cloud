@@ -1,12 +1,13 @@
 package com.autumn.auth.controller;
 
-
+import com.autumn.auth.config.RabbitMqConfig;
 import com.autumn.auth.model.dto.MenuDto;
 import com.autumn.auth.model.vo.MenuVo;
 import com.autumn.auth.model.vo.RouteVo;
 import com.autumn.auth.service.IMenuService;
 import com.autumn.auth.utils.SecurityUtils;
 import com.autumn.common.core.result.R;
+import com.autumn.auth.message.MessageProducer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,13 +28,12 @@ public class MenuController {
 
     private final IMenuService menuService;
 
-
+    private final MessageProducer messageProducer;
 
     // 获取动态路由
     @GetMapping("/getAsyncRoutes")
     public R<List<RouteVo>> getAsyncRoutes() {
-        // Long userId = SecurityUtils.getCurrentUserId();
-        Long userId = 1L;
+        Long userId = SecurityUtils.getCurrentUserId();
         List<RouteVo> asyncRoutes = menuService.getAsyncRoutes(userId);
         return R.success(asyncRoutes);
     }
@@ -49,7 +49,7 @@ public class MenuController {
     @PostMapping
     public R<Boolean> add(@RequestBody MenuDto dto) {
         Boolean result = menuService.addMenu(dto);
-        menuService.updateRoutesCache();
+        messageProducer.sendMessage("菜单路由新增", RabbitMqConfig.MENU_EXCHANGE, RabbitMqConfig.MENU_KEY);
         return R.success(result);
     }
 
@@ -58,7 +58,7 @@ public class MenuController {
     @PutMapping
     public R<Boolean> edit(@RequestBody MenuDto dto) {
         Boolean result = menuService.updateMenu(dto);
-        menuService.updateRoutesCache();
+        messageProducer.sendMessage("菜单路由更新", RabbitMqConfig.MENU_EXCHANGE, RabbitMqConfig.MENU_KEY);
         return R.success(result);
     }
 
@@ -73,7 +73,7 @@ public class MenuController {
     @DeleteMapping("/{id}")
     public R<Boolean> delete(@PathVariable Long id) {
         menuService.delete(id);
-        menuService.updateRoutesCache();
+        messageProducer.sendMessage("菜单路由删除", RabbitMqConfig.MENU_EXCHANGE, RabbitMqConfig.MENU_KEY);
         return R.success(true);
     }
 

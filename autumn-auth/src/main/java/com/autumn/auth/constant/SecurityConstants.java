@@ -58,9 +58,9 @@ public class SecurityConstants {
     public static final String OAUTH_PARAMETER_NAME_EMAIL_CAPTCHA = "emailCaptcha";
 
     /**
-     * 账号参数名
+     * 用户名参数名
      */
-    public static final String OAUTH_PARAMETER_NAME_ACCOUNT = "account";
+    public static final String OAUTH_PARAMETER_NAME_USERNAME = "username";
 
     /**
      * 密码参数名

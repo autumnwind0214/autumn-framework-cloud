@@ -87,8 +87,8 @@ public enum ResultCodeEnum {
     AUTHENTICATION_FAILED(401, "AUTHENTICATION_FAILED"),
     // 权限不能为空
     SCOPE_NOT_EMPTY(400, "SCOPE_NOT_EMPTY"),
-    // 账号不能为空
-    ACCOUNT_NOT_EMPTY(400, "ACCOUNT_NOT_EMPTY"),
+    // 用户名不能为空
+    USERNAME_NOT_EMPTY(400, "USERNAME_NOT_EMPTY"),
     // 密码不能为空
     PASSWORD_NOT_EMPTY(400, "PASSWORD_NOT_EMPTY"),
     // 手机号不能为空

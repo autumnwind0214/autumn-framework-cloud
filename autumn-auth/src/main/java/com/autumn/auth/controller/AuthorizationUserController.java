@@ -78,7 +78,7 @@ public class AuthorizationUserController {
     @PreAuthorize("hasAuthority('system:user:edit')")
     @PutMapping
     public R<Boolean> edit(@Validated(UpdateGroup.class) @RequestBody UserDto dto) {
-        if (dto.getId().equals(1L) && !"admin".equals(dto.getAccount())) {
+        if (dto.getId().equals(1L) && !"admin".equals(dto.getUsername())) {
             return R.fail("禁止修改超级管理员用户名");
         }
         return R.success(authorizationUserService.edit(dto));

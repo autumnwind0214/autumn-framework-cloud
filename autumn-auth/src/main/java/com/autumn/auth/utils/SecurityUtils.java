@@ -1,6 +1,7 @@
 package com.autumn.auth.utils;
 
 import com.alibaba.fastjson2.JSONObject;
+import com.autumn.common.auth.constant.GrantAuthConstant;
 import com.autumn.common.core.exception.AutumnException;
 import com.autumn.common.core.result.ResultCodeEnum;
 import com.autumn.common.core.utils.JsonUtils;
@@ -20,12 +21,15 @@ import org.springframework.security.oauth2.server.authorization.authentication.O
 import org.springframework.security.oauth2.server.resource.BearerTokenError;
 import org.springframework.security.oauth2.server.resource.BearerTokenErrorCodes;
 import org.springframework.security.oauth2.server.resource.authentication.AbstractOAuth2TokenAuthenticationToken;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -183,6 +187,25 @@ public class SecurityUtils {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getName() != null) {
             return Long.parseLong(authentication.getName());
+        }
+        // 登录失效
+        throw new AutumnException(ResultCodeEnum.LOGIN_INVALID);
+    }
+
+    /**
+     * 获取令牌中的角色ids
+     */
+    public static List<Long> getCurrentUserRoleIds() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Object obj = ((JwtAuthenticationToken) authentication).getToken().getClaims().get(GrantAuthConstant.AUTHORITIES_ROLE_ID_KEY);
+        if (obj instanceof List<?> rawList) {
+            List<Long> list = new ArrayList<>();
+            for (Object item : rawList) {
+                if (item instanceof Long) {
+                    list.add((Long) item);
+                }
+            }
+            return list;
         }
         // 登录失效
         throw new AutumnException(ResultCodeEnum.LOGIN_INVALID);
