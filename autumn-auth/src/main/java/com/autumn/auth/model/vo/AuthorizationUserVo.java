@@ -23,7 +23,7 @@ import java.util.List;
  */
 @Data
 @AutoMapper(target = AuthorizationUser.class)
-public class AuthorizationUserVo {
+public class AuthorizationUserVo implements Serializable{
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -35,11 +35,6 @@ public class AuthorizationUserVo {
      * 账号
      */
     String username;
-
-    /**
-     * 密码
-     */
-    String password;
 
     /**
      * 手机号

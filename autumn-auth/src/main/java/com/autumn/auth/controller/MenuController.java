@@ -32,10 +32,9 @@ public class MenuController {
 
     // 获取动态路由
     @GetMapping("/getAsyncRoutes")
-    public R<List<RouteVo>> getAsyncRoutes() {
+    public List<RouteVo> getAsyncRoutes() {
         Long userId = SecurityUtils.getCurrentUserId();
-        List<RouteVo> asyncRoutes = menuService.getAsyncRoutes(userId);
-        return R.success(asyncRoutes);
+        return menuService.getAsyncRoutes(userId);
     }
 
     // 列表查询

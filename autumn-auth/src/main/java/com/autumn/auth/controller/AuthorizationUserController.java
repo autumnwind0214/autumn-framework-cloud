@@ -37,28 +37,26 @@ public class AuthorizationUserController {
     private final IUserRoleService userRoleService;
 
     @GetMapping("/{userId}")
-    public R<AuthorizationUserVo> getUserInfo(@PathVariable Long userId) {
-        AuthorizationUserVo userInfoVo = authorizationUserService.getUserInfo(userId);
-        return R.success(userInfoVo);
+    public AuthorizationUserVo getUserInfo(@PathVariable Long userId) {
+        return authorizationUserService.getUserInfo(userId);
     }
 
     @GetMapping("/roleIds/{userId}")
-    public R<Long[]> getRoleIds(@PathVariable Long userId) {
-        return R.success(authorizationUserService.getRoleIds(userId));
+    public Long[] getRoleIds(@PathVariable Long userId) {
+        return authorizationUserService.getRoleIds(userId);
     }
 
     @GetMapping("/mine")
-    public R<AuthorizationUserVo> getMine() {
+    public AuthorizationUserVo getMine() {
         Long userId = SecurityUtils.getCurrentUserId();
-        AuthorizationUserVo userInfoVo = authorizationUserService.getUserInfo(userId);
-        return R.success(userInfoVo);
+        return authorizationUserService.getUserInfo(userId);
     }
 
     @PreAuthorize("hasRole('autumn')")
     @Sensitive
     @PostMapping("/listPage")
-    public R<Page<AuthorizationUserVo>> listPage(@RequestBody UserInfoDto dto) {
-        return R.success(authorizationUserService.listPage(dto));
+    public Page<AuthorizationUserVo> listPage(@RequestBody UserInfoDto dto) {
+        return authorizationUserService.listPage(dto);
     }
 
     @PreAuthorize("hasAuthority('system:user:add')")

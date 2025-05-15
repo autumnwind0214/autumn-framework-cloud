@@ -1,14 +1,24 @@
-spring:
-  data:
-    redis:
+jetcache:
+  statIntervalMinutes: 15
+  areaInCacheName: false
+  hidePackages: com.alibaba
+  local:
+    default:
+      type: caffeine
+      limit: 100
+      keyConvertor: fastjson2 #其他可选：fastjson/jackson
+      expireAfterAccessInMillis: 300000
+  remote:
+    default:
+      type: redis
+      keyConvertor: fastjson2 #其他可选：fastjson/jackson
+      broadcastChannel: projectA
+      valueEncoder: java #其他可选：kryo/kryo5
+      valueDecoder: java #其他可选：kryo/kryo5
+      poolConfig:
+        minIdle: 5
+        maxIdle: 20
+        maxTotal: 50
       host: 127.0.0.1
       port: 6379
-      database: 0
       timeout: 1800000
-      password:
-      jedis:
-        pool:
-          max-active: 20 #最大连接数
-          max-wait: -1    #最大阻塞等待时间(负数表示没限制)
-          max-idle: 5    #最大空闲
-          min-idle: 0     #最小空闲

@@ -72,8 +72,8 @@ public class CaptchaAuthenticationProvider extends DaoAuthenticationProvider {
 
         String captchaId = request.getParameter(SecurityConstants.OAUTH_PARAMETER_NAME_CAPTCHA);
         // 获取缓存中存储的验证码
-        // String captchaCode = redisOperator.get((RedisConstant.IMAGE_CAPTCHA_PREFIX_KEY + captchaId));
-        String captchaCode = "1234";
+        String captchaCode = redisOperator.get((RedisConstant.IMAGE_CAPTCHA_PREFIX_KEY + captchaId));
+        // String captchaCode = "1234";
         if (!ObjectUtils.isEmpty(captchaCode)) {
             if (!captchaCode.equalsIgnoreCase(code)) {
                 throw new InvalidCaptchaException(ResultCodeEnum.CAPTCHA_INCORRECT);
