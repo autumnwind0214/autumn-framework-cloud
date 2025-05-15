@@ -5,6 +5,7 @@ import com.autumn.auth.model.dto.MenuDto;
 import com.autumn.auth.model.vo.MenuVo;
 import com.autumn.auth.model.vo.RouteVo;
 import com.autumn.auth.service.IMenuService;
+import com.autumn.auth.utils.SecurityUtils;
 import com.autumn.common.core.result.R;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,10 +27,14 @@ public class MenuController {
 
     private final IMenuService menuService;
 
+
+
     // 获取动态路由
     @GetMapping("/getAsyncRoutes")
     public R<List<RouteVo>> getAsyncRoutes() {
-        List<RouteVo> asyncRoutes = menuService.getAsyncRoutes();
+        // Long userId = SecurityUtils.getCurrentUserId();
+        Long userId = 1L;
+        List<RouteVo> asyncRoutes = menuService.getAsyncRoutes(userId);
         return R.success(asyncRoutes);
     }
 

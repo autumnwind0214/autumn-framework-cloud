@@ -40,6 +40,7 @@
     <mapstruct-plus-lombok-version>0.2.0</mapstruct-plus-lombok-version>
     <simplemagic-version>1.17</simplemagic-version>
     <jetcache-latest-version>2.7.4</jetcache-latest-version>
+    <jedis-version>4.3.1</jedis-version>
   </properties>
 
   <dependencyManagement>
@@ -158,10 +159,17 @@
         <version>${simplemagic-version}</version>
       </dependency>
 
+      <!--jetcache-->
       <dependency>
         <groupId>com.alicp.jetcache</groupId>
         <artifactId>jetcache-starter-redis</artifactId>
         <version>${jetcache-latest-version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>redis.clients</groupId>
+        <artifactId>jedis</artifactId>
+        <version>${jedis-version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

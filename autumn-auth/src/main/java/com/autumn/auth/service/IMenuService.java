@@ -1,7 +1,8 @@
 package com.autumn.auth.service;
 
 
-
+import com.alicp.jetcache.anno.CacheType;
+import com.alicp.jetcache.anno.Cached;
 import com.autumn.auth.entity.Menu;
 import com.autumn.auth.model.dto.MenuDto;
 import com.autumn.auth.model.vo.MenuVo;
@@ -19,7 +20,7 @@ import java.util.List;
 public interface IMenuService extends IService<Menu> {
 
     // 查询用户具有的菜单
-    List<RouteVo> getAsyncRoutes();
+    List<RouteVo> getAsyncRoutes(Long userId);
 
     List<MenuVo> getList();
 

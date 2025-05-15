@@ -1,6 +1,10 @@
 package com.autumn.auth.service.impl;
 
 
+import com.alicp.jetcache.Cache;
+import com.alicp.jetcache.CacheManager;
+import com.alicp.jetcache.anno.CacheType;
+import com.alicp.jetcache.template.QuickConfig;
 import com.autumn.auth.entity.Menu;
 import com.autumn.auth.enums.MenuTypeEnum;
 import com.autumn.auth.mapper.MenuMapper;
@@ -17,11 +21,13 @@ import com.autumn.common.redis.constant.RedisConstant;
 import com.autumn.common.redis.core.RedisOperator;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,18 +47,30 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
 
     private final RedisOperator<List<RouteVo>> redisOperator;
 
+    private final CacheManager cacheManager;
+
+    private Cache<String, List<RouteVo>> routeVoCache;
+
+    @PostConstruct
+    public void init() {
+        QuickConfig qc = QuickConfig.newBuilder("routeVoCache")
+                .cacheType(CacheType.BOTH)
+                .syncLocal(true)
+                .build();
+        routeVoCache = cacheManager.getOrCreateCache(qc);
+    }
+
 
     @Override
-    public List<RouteVo> getAsyncRoutes() {
-        Long userId = SecurityUtils.getCurrentUserId();
+    public List<RouteVo> getAsyncRoutes(Long userId) {
         String key = RedisConstant.ASYNC_ROUTES_PREFIX_KEY + userId;
-        if (redisOperator.containKey(key)) {
-            List<RouteVo> routeVos = redisOperator.get(key);
-            if (!CollectionUtils.isEmpty(routeVos)) {
-                return routeVos;
-            }
+        List<RouteVo> routeList = routeVoCache.get(key);
+        if (!CollectionUtils.isEmpty(routeList)) {
+            return routeList;
         }
-        return getRouteList(userId);
+        routeList = getRouteList(userId);
+        routeVoCache.put(key, routeList);
+        return routeList;
     }
 
     @Override

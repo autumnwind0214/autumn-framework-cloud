@@ -2,6 +2,8 @@ package com.autumn.auth.model.vo;
 
 import lombok.Data;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -10,7 +12,10 @@ import java.util.List;
  * @date 2024年11月15日
  */
 @Data
-public class RouteVo {
+public class RouteVo implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     // 路径
     private String path;
@@ -24,7 +29,10 @@ public class RouteVo {
     private List<RouteVo> children;
 
     @Data
-    public static class Meta {
+    public static class Meta implements Serializable {
+
+        @Serial
+        private static final long serialVersionUID = 1L;
 
         // 菜单和面包屑对应的图标
         private String icon;
