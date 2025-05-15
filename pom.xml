@@ -39,6 +39,7 @@
     <mapstruct-version>1.5.5.Final</mapstruct-version>
     <mapstruct-plus-lombok-version>0.2.0</mapstruct-plus-lombok-version>
     <simplemagic-version>1.17</simplemagic-version>
+    <jetcache-latest-version>2.7.4</jetcache-latest-version>
   </properties>
 
   <dependencyManagement>
@@ -155,6 +156,12 @@
         <groupId>com.j256.simplemagic</groupId>
         <artifactId>simplemagic</artifactId>
         <version>${simplemagic-version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.alicp.jetcache</groupId>
+        <artifactId>jetcache-starter-redis</artifactId>
+        <version>${jetcache-latest-version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

@@ -6,8 +6,9 @@ import com.autumn.auth.authorization.grant.AutumnGrantAuthenticationProvider;
 import com.autumn.auth.authorization.handler.*;
 import com.autumn.auth.constant.SecurityConstants;
 import com.autumn.auth.properties.CustomSecurityProperties;
-import com.autumn.auth.utils.RsaKeyUtils;
 import com.autumn.auth.utils.SecurityUtils;
+import com.autumn.common.redis.constant.RedisConstant;
+import com.autumn.common.redis.core.RedisOperator;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
@@ -53,6 +54,8 @@ import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.UrlUtils;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
+import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -82,6 +85,8 @@ import java.util.function.Consumer;
 public class AuthorizationConfig {
 
     private final CustomSecurityProperties customSecurityProperties;
+
+    private final RedisOperator<String> redisOperator;
 
     /**
      * 配置端点的过滤器链
@@ -376,25 +381,26 @@ public class AuthorizationConfig {
      */
     @Bean
     public JWKSource<SecurityContext> jwkSource() throws Exception {
-        // KeyPair keyPair = generateRsaKey();
-        // RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
-        // RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();
-        // RSAKey rsaKey = new RSAKey.Builder(publicKey)
-        //         .privateKey(privateKey)
-        //         .keyID(UUID.randomUUID().toString())
-        //         .build();
-        // JWKSet jwkSet = new JWKSet(rsaKey);
-        // return new ImmutableJWKSet<>(jwkSet);
-
-        // 持久化密钥
-        KeyPair keyPair = RsaKeyUtils.loadKeyPair();
-        RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
-        RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();
-        RSAKey rsaKey = new RSAKey.Builder(publicKey)
-                .privateKey(privateKey)
-                .keyID(UUID.randomUUID().toString())
-                .build();
-        JWKSet jwkSet = new JWKSet(rsaKey);
+        // 先从redis获取
+        String jwkSetCache = redisOperator.get(RedisConstant.AUTHORIZATION_JWS_PREFIX_KEY);
+        if (!StringUtils.hasText(jwkSetCache)) {
+            KeyPair keyPair = generateRsaKey();
+            RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
+            RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();
+            RSAKey rsaKey = new RSAKey.Builder(publicKey)
+                    .privateKey(privateKey)
+                    .keyID(UUID.randomUUID().toString())
+                    .build();
+            // 生成jws
+            JWKSet jwkSet = new JWKSet(rsaKey);
+            // 转为json字符串
+            String jwkSetString = jwkSet.toString(Boolean.FALSE);
+            // 存入redis
+            redisOperator.set(RedisConstant.AUTHORIZATION_JWS_PREFIX_KEY, jwkSetString);
+            return new ImmutableJWKSet<>(jwkSet);
+        }
+        // 解析存储的jws
+        JWKSet jwkSet = JWKSet.parse(jwkSetCache);
         return new ImmutableJWKSet<>(jwkSet);
     }
 
