@@ -24,6 +24,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -67,26 +69,35 @@ public class AuthorizationUserServiceImpl extends ServiceImpl<AuthorizationUserM
                 wrapper.eq(AuthorizationUser::getUsername, username);
             }
         }
-        AuthorizationUserVo authorizationUser = authorizationUserMapper.selectVoOne(wrapper);
+        AuthorizationUser authorizationUser = authorizationUserMapper.selectOne(wrapper);
         if (authorizationUser == null) {
             throw new UsernameNotFoundException(ResultCodeEnum.ACCOUNT_NOT_EXIST.getMessage());
-        } else {
-            // 更新登录时间
-            authorizationUser.setLoginTime(LocalDateTime.now());
-            authorizationUserMapper.update(new LambdaUpdateWrapper<AuthorizationUser>()
-                    .set(AuthorizationUser::getLoginTime, LocalDateTime.now())
-                    .eq(AuthorizationUser::getId, authorizationUser.getId()));
-            // 用户角色id
-            List<Long> roleIds = userRoleMapper.queryRoleIdsByUserId(authorizationUser.getId());
-            authorizationUser.setRoleIds(roleIds);
-            // 用户权限
-            Collection<CustomGrantedAuthority> authorities = new ArrayList<>();
-            userRoleMapper.queryPermissionByUserId(authorizationUser.getId()).forEach(item -> {
-                authorities.add(new CustomGrantedAuthority(item));
-            });
-            authorizationUser.setAuthorities(authorities);
         }
-        return authorizationUser;
+
+        // 更新登录时间
+        authorizationUser.setLoginTime(LocalDateTime.now());
+        authorizationUserMapper.update(new LambdaUpdateWrapper<AuthorizationUser>()
+                .set(AuthorizationUser::getLoginTime, LocalDateTime.now())
+                .eq(AuthorizationUser::getId, authorizationUser.getId()));
+        // 用户角色权限
+        List<String> rolePermission = userRoleMapper.queryRolesByUserId(authorizationUser.getId());
+        // 用户权限
+        Collection<CustomGrantedAuthority> authorities = new ArrayList<>();
+        userRoleMapper.queryPermissionByUserId(authorizationUser.getId()).forEach(item -> {
+            authorities.add(new CustomGrantedAuthority(item));
+        });
+        rolePermission.forEach(item -> {
+            authorities.add(new CustomGrantedAuthority("ROLE_" + item));
+        });
+
+        return User.withUsername(String.valueOf(authorizationUser.getId()))
+                .password(authorizationUser.getPassword())
+                .disabled(!authorizationUser.isEnabled())
+                .accountLocked(!authorizationUser.isAccountNonLocked())
+                .accountExpired(!authorizationUser.isAccountNonExpired())
+                .credentialsExpired(!authorizationUser.isCredentialsNonExpired())
+                .authorities(authorities)
+                .build();
     }
 
     @Override

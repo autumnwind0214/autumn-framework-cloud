@@ -104,8 +104,8 @@ public class FederatedIdentityIdTokenCustomizer implements OAuth2TokenCustomizer
                 .map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
         JwtClaimsSet.Builder claims = context.getClaims();
         claims.claim(GrantAuthConstant.AUTHORITIES_KEY, collect);
-        AuthorizationUserVo user = (AuthorizationUserVo)context.getPrincipal().getPrincipal();
-        claims.claim(GrantAuthConstant.AUTHORITIES_ROLE_ID_KEY,user.getRoleIds());
+        // UserDetails user = (UserDetails)context.getPrincipal().getPrincipal();
+        // claims.claim(GrantAuthConstant.AUTHORITIES_ROLE_ID_KEY,user.());
 
     }
 }

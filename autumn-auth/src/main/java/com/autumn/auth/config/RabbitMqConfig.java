@@ -11,7 +11,7 @@ import java.util.Map;
 
 /**
  * @author autumn
- * @desc rabbitmq核心配置
+ * @desc rabbitmq配置
  * @date 2025年05月15日
  */
 @Configuration
@@ -20,7 +20,7 @@ public class RabbitMqConfig {
 
     public static final String MENU_QUEUE = "menu.update.queue";
     public static final String MENU_EXCHANGE = "menu.update.exchange";
-    public static final String MENU_KEY = "menu.key";
+    public static final String MENU_KEY = "menu.update.key";
 
     /**
      * 菜单路由更新交换机

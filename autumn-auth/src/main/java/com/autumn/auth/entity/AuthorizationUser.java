@@ -110,4 +110,32 @@ public class AuthorizationUser extends BaseEntity {
      */
     @TableField(typeHandler = BooleanTypeHandler.class)
     Boolean status;
+
+    /**
+     * 获取用户凭据是否过期
+     */
+    public boolean isCredentialsNonExpired() {
+        return LocalDateTime.now().isBefore(this.credentialExpire);
+    }
+
+    /**
+     * 指示是否已启用此用户。禁用的用户不能身份验证
+     *
+     * @return true: 已启用    false: 未启用
+     */
+    public boolean isEnabled() {
+        return status;
+    }
+
+    public boolean isAccountNonExpired() {
+        return LocalDateTime.now().isBefore(this.accountExpire);
+    }
+
+    /**
+     * 指示是否已锁定此用户。锁定的用户不能身份验证
+     *
+     */
+    public boolean isAccountNonLocked() {
+        return locked;
+    }
 }

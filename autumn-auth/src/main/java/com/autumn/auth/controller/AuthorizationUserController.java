@@ -54,6 +54,7 @@ public class AuthorizationUserController {
         return R.success(userInfoVo);
     }
 
+    @PreAuthorize("hasRole('autumn')")
     @Sensitive
     @PostMapping("/listPage")
     public R<Page<AuthorizationUserVo>> listPage(@RequestBody UserInfoDto dto) {
