@@ -1,6 +1,6 @@
 package com.autumn.common.rabbitmq.config;
 
-import com.autumn.blog.common.rabbitmq.constant.RabbitMqConstant;
+import com.autumn.common.rabbitmq.constant.RabbitMqConstant;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
