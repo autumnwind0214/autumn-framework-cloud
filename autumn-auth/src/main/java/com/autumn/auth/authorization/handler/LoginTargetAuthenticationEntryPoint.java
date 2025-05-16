@@ -1,22 +1,20 @@
 package com.autumn.auth.authorization.handler;
 
 import com.autumn.common.core.result.R;
+import com.autumn.common.core.result.ResultCodeEnum;
 import com.autumn.common.core.utils.JsonUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.util.UrlUtils;
-import org.springframework.util.ObjectUtils;
 
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -56,20 +54,21 @@ public class LoginTargetAuthenticationEntryPoint extends LoginUrlAuthenticationE
     }
 
     @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        String deviceVerificationUri = "/oauth2/device_verification";
+    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException,
+            ServletException {
+        // String deviceVerificationUri = "/oauth2/device_verification";
         // 兼容设备码前后端分离
-        if (request.getRequestURI().equals(deviceVerificationUri)
-                && request.getMethod().equals(HttpMethod.POST.name())
-                && UrlUtils.isAbsoluteUrl(deviceActivateUri)) {
-            // 如果是请求验证设备激活码(user_code)时未登录并且设备码验证页面是前后端分离的那种则写回json
-            R<String> success = R.fail("登录已失效，请重新打开设备提供的验证地址");
-            response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-            response.getWriter().write(JsonUtils.objectCovertToJson(success));
-            response.getWriter().flush();
-            return;
-        }
+        // if (request.getRequestURI().equals(deviceVerificationUri)
+        //         && request.getMethod().equals(HttpMethod.POST.name())
+        //         && UrlUtils.isAbsoluteUrl(deviceActivateUri)) {
+        //     // 如果是请求验证设备激活码(user_code)时未登录并且设备码验证页面是前后端分离的那种则写回json
+        //     R<String> success = R.fail("登录已失效，请重新打开设备提供的验证地址");
+        //     response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+        //     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        //     response.getWriter().write(JsonUtils.objectCovertToJson(success));
+        //     response.getWriter().flush();
+        //     return;
+        // }
 
         // 获取登录表单的地址
         String loginForm = determineUrlToUseForThisRequest(request, response, authException);
@@ -79,15 +78,21 @@ public class LoginTargetAuthenticationEntryPoint extends LoginUrlAuthenticationE
             return;
         }
 
-        StringBuffer requestUrl = request.getRequestURL();
-        if (!ObjectUtils.isEmpty(request.getQueryString())) {
-            requestUrl.append("?").append(request.getQueryString());
-        }
+        R<String> success = R.fail(ResultCodeEnum.LOGIN_INVALID);
+        response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.getWriter().write(JsonUtils.objectCovertToJson(success));
+        response.getWriter().flush();
 
-        // 绝对路径在重定向前添加target参数
-        String targetParameter = URLEncoder.encode(requestUrl.toString(), StandardCharsets.UTF_8);
-        String targetUrl = loginForm + "?target=" + targetParameter;
-        log.debug("重定向至前后端分离的登录页面：{}", targetUrl);
-        this.redirectStrategy.sendRedirect(request, response, targetUrl);
+        // StringBuffer requestUrl = request.getRequestURL();
+        // if (!ObjectUtils.isEmpty(request.getQueryString())) {
+        //     requestUrl.append("?").append(request.getQueryString());
+        // }
+        //
+        // // 绝对路径在重定向前添加target参数
+        // String targetParameter = URLEncoder.encode(requestUrl.toString(), StandardCharsets.UTF_8);
+        // String targetUrl = loginForm + "?target=" + targetParameter;
+        // log.debug("重定向至前后端分离的登录页面：{}", targetUrl);
+        // this.redirectStrategy.sendRedirect(request, response, targetUrl);
     }
 }

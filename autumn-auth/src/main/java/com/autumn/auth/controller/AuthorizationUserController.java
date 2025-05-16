@@ -1,6 +1,5 @@
 package com.autumn.auth.controller;
 
-
 import com.autumn.auth.model.dto.*;
 import com.autumn.auth.model.vo.AuthorizationUserVo;
 import com.autumn.auth.service.IAuthorizationUserService;
@@ -122,7 +121,6 @@ public class AuthorizationUserController {
         }
         return R.success(authorizationUserService.delete(ids));
     }
-
 
 
 }

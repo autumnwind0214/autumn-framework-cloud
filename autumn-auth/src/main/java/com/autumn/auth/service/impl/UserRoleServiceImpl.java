@@ -31,6 +31,10 @@ public class UserRoleServiceImpl extends ServiceImpl<UserRoleMapper, UserRole> i
         userRoleMapper.delete(new LambdaQueryWrapper<UserRole>().eq(UserRole::getUserId, dto.getUserId()));
         List<UserRole> list = new ArrayList<>();
         for (Long roleId : dto.getRoleIds()) {
+            // 禁止分配超级管理员角色
+            if (roleId == 1L) {
+                continue;
+            }
             UserRole userRole = new UserRole(dto.getUserId(), roleId);
             list.add(userRole);
         }

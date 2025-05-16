@@ -11,5 +11,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @date 2025年05月03日
  */
 public interface IUserRoleService extends IService<UserRole> {
+
     Boolean putAssignRole(UserRoleDto dto);
+
 }
