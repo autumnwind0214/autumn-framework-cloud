@@ -14,7 +14,7 @@ import com.autumn.auth.model.vo.AuthorizationUserVo;
 import com.autumn.auth.service.IAuthorizationUserService;
 import com.autumn.common.core.exception.AutumnException;
 import com.autumn.common.core.result.ResultCodeEnum;
-import com.autumn.common.core.utils.AESCryptUtil;
+import com.autumn.common.core.utils.EncryptUtils;
 import com.autumn.common.core.utils.MapstructUtils;
 import com.autumn.common.oss.client.OssClient;
 import com.autumn.common.oss.result.OSSResult;
@@ -23,8 +23,6 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -117,10 +115,13 @@ public class AuthorizationUserServiceImpl extends ServiceImpl<AuthorizationUserM
         if (checkDuplicateAccounts(dto)) {
             throw new AutumnException(ResultCodeEnum.DUPLICATE_ACCOUNTS);
         }
-
         AuthorizationUser authorizationUser = MapstructUtils.convert(dto, AuthorizationUser.class);
         Assert.notNull(authorizationUser, ResultCodeEnum.OBJECT_NOTNULL.getMessage());
-        authorizationUser.setPassword(new BCryptPasswordEncoder().encode(authorizationUser.getPassword()));
+        if (authorizationUser.getAccountExpire() == null) {
+            authorizationUser.setAccountExpire(LocalDateTime.now().plusWeeks(1));
+        }
+        authorizationUser.setCredentialExpire(authorizationUser.getAccountExpire());
+        authorizationUser.setPassword(new BCryptPasswordEncoder().encode(EncryptUtils.decrypt(authorizationUser.getPassword())));
         authorizationUser.setCreateTime(LocalDateTime.now());
         return save(authorizationUser);
     }
@@ -133,6 +134,10 @@ public class AuthorizationUserServiceImpl extends ServiceImpl<AuthorizationUserM
         }
         AuthorizationUser authorizationUser = MapstructUtils.convert(dto, AuthorizationUser.class);
         Assert.notNull(authorizationUser, ResultCodeEnum.OBJECT_NOTNULL.getMessage());
+        if (authorizationUser.getAccountExpire() == null) {
+            authorizationUser.setAccountExpire(LocalDateTime.now().plusWeeks(1));
+        }
+        authorizationUser.setCredentialExpire(authorizationUser.getAccountExpire());
         authorizationUser.setPassword(null);
         authorizationUser.setUpdateTime(LocalDateTime.now());
         return updateById(authorizationUser);
@@ -141,7 +146,7 @@ public class AuthorizationUserServiceImpl extends ServiceImpl<AuthorizationUserM
     @Override
     public Boolean editStatus(Long id, Integer status) {
         AuthorizationUser user = new AuthorizationUser();
-        user.setStatus(status == 1);
+        user.setStatus(status);
         user.setUpdateTime(LocalDateTime.now());
         user.setId(id);
         return updateById(user);
@@ -155,7 +160,7 @@ public class AuthorizationUserServiceImpl extends ServiceImpl<AuthorizationUserM
 
     @Override
     public Boolean changePassword(ChangePasswordDto dto) {
-        String passwd = AESCryptUtil.decrypt(dto.getPassword());
+        String passwd = EncryptUtils.decrypt(dto.getPassword());
         AuthorizationUser user = new AuthorizationUser();
         user.setId(dto.getUserId());
         user.setPassword(new BCryptPasswordEncoder().encode(passwd));

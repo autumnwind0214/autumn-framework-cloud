@@ -52,7 +52,6 @@ public class AuthorizationUserController {
         return authorizationUserService.getUserInfo(userId);
     }
 
-    @PreAuthorize("hasRole('autumn')")
     @Sensitive
     @PostMapping("/listPage")
     public Page<AuthorizationUserVo> listPage(@RequestBody UserInfoDto dto) {

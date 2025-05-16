@@ -1,124 +1,62 @@
 package com.autumn.common.core.utils;
 
-import org.apache.tomcat.util.codec.binary.Base64;
-import org.springframework.util.StringUtils;
-
 import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 
 /**
  * @author autumn
- * @desc 加密工具类
- * @date 2025/5/15 22:10
- **/
+ * @desc 加密解密工具类
+ * @date 2025年05月14日
+ */
 public class EncryptUtils {
 
-    private static final String ALGORITHM = "AES/CBC/PKCS5Padding";
-    public static final String IV = "2233445566778899";
+    // 16字节密钥
+    private static final String KEY = "qwertyuiopasdfgh";
+    // 16字节IV
+    private static final String IV = "jklzxcvbnm123456";
 
     /**
-     * base 64 encode
+     * AES 解密方法 (CBC 模式)
      *
-     * @param bytes 待编码的byte[]
-     * @return 编码后的base 64 code
+     * @param encryptedData 前端加密后的 Base64 字符串
+     * @return 解密后的原始字符串
      */
-    public static String base64Encode(byte[] bytes) {
-        String data = Base64.encodeBase64String(bytes);
-        if (StringUtils.hasLength(data)) {
-            // 处理一行超过76个字符换行问题
-            return data.replaceAll("[\\s*\t\n\r]", "");
-        } else {
-            return data;
+    public static String decrypt(String encryptedData) {
+        try {
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            SecretKeySpec keySpec = new SecretKeySpec(KEY.getBytes(), "AES");
+            IvParameterSpec ivSpec = new IvParameterSpec(IV.getBytes());
+            cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
+
+            byte[] decodedValue = Base64.getDecoder().decode(encryptedData);
+            byte[] decryptedBytes = cipher.doFinal(decodedValue);
+            return new String(decryptedBytes);
+        } catch (Exception e) {
+            throw new RuntimeException("AES 解密失败", e);
         }
     }
 
     /**
-     * base 64 decode
+     * AES 加密方法 (CBC 模式)，与 CryptoJS 兼容
      *
-     * @param base64Code 待解码的base 64 code
-     * @return 解码后的byte[]
+     * @param content 明文字符串
+     * @return Base64 编码的加密字符串
      */
-    public static byte[] base64Decode(String base64Code) throws Exception {
-        return StringUtils.hasLength(base64Code) ? Base64.decodeBase64(base64Code) : null;
-    }
+    public static String encrypt(String content) {
+        try {
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            SecretKeySpec keySpec = new SecretKeySpec(KEY.getBytes(), "AES");
+            IvParameterSpec ivSpec = new IvParameterSpec(IV.getBytes());
+            cipher.init(Cipher.ENCRYPT_MODE, keySpec, ivSpec);
 
-    /**
-     * AES加密
-     *
-     * @param content    待加密的内容
-     * @param encryptKey 加密密钥
-     * @return 加密后的byte[]
-     */
-    public static byte[] aesEncryptToBytes(String content, String encryptKey) throws Exception {
-        byte[] raw = encryptKey.getBytes();
-        SecretKeySpec secretKeySpec = new SecretKeySpec(raw, "AES");
-        Cipher cipher = Cipher.getInstance(ALGORITHM);//"算法/模式/补码方式"
-        IvParameterSpec iv = new IvParameterSpec(IV.getBytes());// 使用CBC模式，需要一个向量iv，可增加加密算法的强度
-        cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, iv);
-        return cipher.doFinal(content.getBytes(StandardCharsets.UTF_8));
+            byte[] encryptedBytes = cipher.doFinal(content.getBytes());
+            return Base64.getEncoder().encodeToString(encryptedBytes);
+        } catch (Exception e) {
+            throw new RuntimeException("AES 加密失败", e);
+        }
     }
 
 
-    /**
-     * AES解密
-     *
-     * @param encryptBytes 待解密的byte[]
-     * @param decryptKey   解密密钥
-     * @return 解密后的String
-     */
-    public static String aesDecryptByBytes(byte[] encryptBytes, String decryptKey) throws Exception {
-        byte[] raw = decryptKey.getBytes();
-        SecretKeySpec secretKeySpec = new SecretKeySpec(raw, "AES");
-        Cipher cipher = Cipher.getInstance(ALGORITHM);//"算法/模式/补码方式"
-        IvParameterSpec iv = new IvParameterSpec(IV.getBytes());// 使用CBC模式，需要一个向量iv，可增加加密算法的强度
-        cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, iv);
-        byte[] decryptBytes = cipher.doFinal(encryptBytes);
-        return new String(decryptBytes);
-    }
-
-
-    /**
-     * AES加密为base 64 code
-     *
-     * @param content    待加密的内容
-     * @param encryptKey 加密密钥
-     * @return 加密后的base 64 code
-     */
-    public static String aesEncrypt(String content, String encryptKey) throws Exception {
-        return base64Encode(aesEncryptToBytes(content, encryptKey));
-    }
-
-    /**
-     * 将base 64 code AES解密
-     *
-     * @param encryptStr 待解密的base 64 code
-     * @param decryptKey 解密密钥
-     * @return 解密后的string
-     */
-    public static String aesDecrypt(String encryptStr, String decryptKey) throws Exception {
-        return StringUtils.hasLength(encryptStr) ? aesDecryptByBytes(base64Decode(encryptStr), decryptKey) : null;
-    }
-
-    public static byte[] generateDesKey(int length) throws Exception {
-        // 实例化
-        KeyGenerator kgen = KeyGenerator.getInstance("AES");
-        // 设置密钥长度
-        kgen.init(length);
-        // 生成密钥
-        SecretKey skey = kgen.generateKey();
-        // 返回密钥的二进制编码
-        return skey.getEncoded();
-    }
-
-    public static int genSalt() {
-        int salt = 0;
-        do {
-            salt = (int) (Math.random() * 1000000);
-        } while (salt >= 1000000 || salt <= 99999);
-        return salt;
-    }
 }

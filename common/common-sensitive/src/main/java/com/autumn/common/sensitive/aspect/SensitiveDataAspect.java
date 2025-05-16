@@ -28,10 +28,8 @@ public class SensitiveDataAspect {
         Object data = null;
         if (result instanceof R res) {
             data = res.getData();
-        }
-
-        if (data == null) {
-            return;
+        } else {
+            data = result;
         }
 
         if ("com.baomidou.mybatisplus.extension.plugins.pagination.Page".equals(data.getClass().getName())) {

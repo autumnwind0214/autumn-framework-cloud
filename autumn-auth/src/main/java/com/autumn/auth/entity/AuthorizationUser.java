@@ -2,11 +2,7 @@ package com.autumn.auth.entity;
 
 import com.alibaba.fastjson2.annotation.JSONField;
 import com.autumn.auth.model.vo.AuthorizationUserVo;
-import com.autumn.common.core.utils.AESCryptUtil;
 import com.autumn.mybatis.core.model.BaseEntity;
-import com.autumn.mybatis.handler.BooleanTypeHandler;
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -14,13 +10,8 @@ import io.github.linpeilie.annotations.AutoMapper;
 import io.github.linpeilie.annotations.AutoMappers;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
-import java.io.Serial;
-import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Collection;
 
 /**
  * @author autumn
@@ -85,8 +76,7 @@ public class AuthorizationUser extends BaseEntity {
      * 账户是否被锁定
      * 0: 已锁定    1: 未锁定
      */
-    @TableField(typeHandler = BooleanTypeHandler.class)
-    Boolean locked;
+    Integer locked;
 
     /**
      * 用户凭据过期时间
@@ -108,8 +98,7 @@ public class AuthorizationUser extends BaseEntity {
      * 启用状态
      * 0: 未启用    1: 已启用
      */
-    @TableField(typeHandler = BooleanTypeHandler.class)
-    Boolean status;
+    Integer status;
 
     /**
      * 获取用户凭据是否过期
@@ -124,18 +113,20 @@ public class AuthorizationUser extends BaseEntity {
      * @return true: 已启用    false: 未启用
      */
     public boolean isEnabled() {
-        return status;
+        return status == 1;
     }
 
+    /**
+     * 指示是否已过期此用户。过期的用户不能身份验证
+     */
     public boolean isAccountNonExpired() {
         return LocalDateTime.now().isBefore(this.accountExpire);
     }
 
     /**
      * 指示是否已锁定此用户。锁定的用户不能身份验证
-     *
      */
     public boolean isAccountNonLocked() {
-        return locked;
+        return status == 1;
     }
 }

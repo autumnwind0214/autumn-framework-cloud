@@ -73,13 +73,18 @@ public class AuthorizationUserVo implements Serializable{
      */
     LocalDateTime loginTime;
 
+    /**
+     * 有效期
+     */
+    LocalDateTime accountExpire;
+
     // 用户绑定角色
     String[] roles;
 
     // 用户权限
     String[] permissions;
 
-    Boolean status;
+    Integer status;
 
     String remark;
 

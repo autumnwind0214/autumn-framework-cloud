@@ -6,6 +6,7 @@ import com.autumn.auth.local.GrantThreadLocal;
 import com.autumn.auth.utils.SecurityUtils;
 import com.autumn.common.core.exception.AutumnException;
 import com.autumn.common.core.result.ResultCodeEnum;
+import com.autumn.common.core.utils.EncryptUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -231,6 +232,8 @@ public class AutumnGrantAuthenticationProvider implements AuthenticationProvider
                 // 密码登录
                 String username = (String) additionalParameters.get(SecurityConstants.OAUTH_PARAMETER_NAME_USERNAME);
                 String password = (String) additionalParameters.get(SecurityConstants.OAUTH_PARAMETER_NAME_PASSWORD);
+                // 密码解密
+                password = EncryptUtils.decrypt(password);
                 // 构建UsernamePasswordAuthenticationToken通过AbstractUserDetailsAuthenticationProvider及其子类对用户名与密码进行校验
                 unauthenticated = UsernamePasswordAuthenticationToken.unauthenticated(username, password);
             }

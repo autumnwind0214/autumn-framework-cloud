@@ -13,8 +13,4 @@ public class I18nUtils {
         ResourceBundle bundle = ResourceBundle.getBundle("messages", locale);
         return bundle.getString(key);
     }
-
-    public static void main(String[] args) {
-        System.out.println(getMessage("CAPTCHA_NOT_EMPTY", Locale.CHINA));
-    }
 }
