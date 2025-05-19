@@ -10,8 +10,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Base64;
+
 import com.autumn.common.oss.properties.MinioProperties;
+import org.springframework.web.multipart.MultipartFile;
+
 /**
  * @author autumn
  * @desc 对象存储client
@@ -48,9 +54,8 @@ public class OssClient {
      * 创建存储桶
      *
      * @param bucket 存储桶名称
-     * @return boolean
      */
-    private Boolean makeBucket(String bucket) {
+    private void makeBucket(String bucket) {
         try {
             minioClient.makeBucket(MakeBucketArgs.builder()
                     .bucket(bucket)
@@ -59,7 +64,6 @@ public class OssClient {
             log.error("bucket创建失败", e);
             throw new AutumnException(ResultCodeEnum.INTERNAL_SERVER_ERROR, "bucket创建失败: " + bucket);
         }
-        return true;
     }
 
     /**
@@ -101,6 +105,28 @@ public class OssClient {
                 .contentType("image/" + imageType)
                 .build();
         // 上传文件
+        minioClient.putObject(build);
+
+        result.setFilename(filename);
+        result.setReviewUrl(minioProperties.getMediaUrl() + folderPath + filename);
+        return result;
+    }
+
+    public OSSResult uploadImg(MultipartFile file, String extension) throws Exception {
+        OSSResult result = new OSSResult();
+        // 生成唯一文件名
+        String filename = OSSUtils.getFilename(extension);
+        // 获取图片上传目录
+        String folderPath = OSSUtils.getImgFolderPath();
+
+        // 构建PutObjectArgs对象
+        PutObjectArgs build = PutObjectArgs.builder()
+                .bucket(minioProperties.getMediaBucket())
+                .object(folderPath + filename)
+                .stream(new ByteArrayInputStream(file.getBytes()), file.getSize(), -1)
+                .contentType(file.getContentType())
+                .build();
+
         minioClient.putObject(build);
 
         result.setFilename(filename);

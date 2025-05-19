@@ -6,6 +6,7 @@ import com.j256.simplemagic.ContentInfo;
 import com.j256.simplemagic.ContentInfoUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.http.MediaType;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -21,7 +22,7 @@ public class OSSUtils {
     /**
      * 获取文件后缀
      */
-    public static String getExtension(File file) {
+    public static String getExtension(MultipartFile file) {
         return FilenameUtils.getExtension(file.getName());
     }
 
