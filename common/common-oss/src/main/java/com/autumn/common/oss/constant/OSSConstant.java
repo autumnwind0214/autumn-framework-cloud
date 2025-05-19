@@ -8,4 +8,6 @@ package com.autumn.common.oss.constant;
 public class OSSConstant {
 
     public static final String IMG = "/img/";
+
+    public static final String TAG_KEY = "md5Hex";
 }

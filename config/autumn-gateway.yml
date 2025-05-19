@@ -22,3 +22,7 @@ spring:
           uri: lb://autumn-auth
           predicates:
             - Path=/auth-api/**
+        - id: media-service
+          uri: lb://media-service
+          predicates:
+            - Path=/media-api/**

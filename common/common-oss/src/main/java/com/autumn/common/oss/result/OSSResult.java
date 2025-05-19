@@ -19,4 +19,9 @@ public class OSSResult {
      * 文件名
      */
     String filename;
+
+    /**
+     * 文件路径
+     */
+    String filePath;
 }

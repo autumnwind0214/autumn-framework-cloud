@@ -14,4 +14,12 @@ import lombok.EqualsAndHashCode;
 @Data
 @TableName("upload_file")
 public class UploadFile extends BaseEntity {
+
+    String fileName;
+
+    String filePath;
+
+    String fileType;
+
+    String fileMd5;
 }
