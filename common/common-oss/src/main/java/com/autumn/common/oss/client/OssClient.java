@@ -98,8 +98,6 @@ public class OssClient {
         // 提取图片类型
         String imageType = parts[0].split("/")[1].split(";")[0];
         byte[] imageBytes = Base64.getDecoder().decode(parts[1]);
-        Map<String, String> tagMap = new HashMap<>();
-        tagMap.put(OSSConstant.TAG_KEY, DigestUtils.md5Hex(imageBytes));
 
         // 生成唯一文件名
         String filename = OSSUtils.getFilename(imageType);
@@ -112,7 +110,6 @@ public class OssClient {
                 .object(folderPath + filename)
                 .stream(new ByteArrayInputStream(imageBytes), imageBytes.length, -1)
                 .contentType("image/" + imageType)
-                .tags(tagMap)
                 .build();
         // 上传文件
         minioClient.putObject(build);
@@ -130,16 +127,12 @@ public class OssClient {
         // 获取图片上传目录
         String folderPath = OSSUtils.getImgFolderPath();
 
-        Map<String, String> tagMap = new HashMap<>();
-        tagMap.put(OSSConstant.TAG_KEY, DigestUtils.md5Hex(file.getBytes()));
-
         // 构建PutObjectArgs对象
         PutObjectArgs build = PutObjectArgs.builder()
                 .bucket(minioProperties.getMediaBucket())
                 .object(folderPath + filename)
                 .stream(new ByteArrayInputStream(file.getBytes()), file.getSize(), -1)
                 .contentType(file.getContentType())
-                .tags(tagMap)
                 .build();
 
         minioClient.putObject(build);
@@ -151,9 +144,13 @@ public class OssClient {
     }
 
     public String getFileMd5(String filepath) throws Exception {
-        Tags tags = minioClient.getObjectTags(
-                GetObjectTagsArgs.builder().bucket(minioProperties.getMediaBucket()).object(filepath).build());
-        return tags.get().get(OSSConstant.TAG_KEY);
+        StatObjectResponse stat = minioClient.statObject(
+                StatObjectArgs.builder()
+                        .bucket(minioProperties.getMediaBucket())
+                        .object(filepath)
+                        .build()
+        );
+        return stat.etag();
     }
 
 

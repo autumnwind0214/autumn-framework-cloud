@@ -14,4 +14,12 @@ public interface IUploadFileService extends IService<UploadFile> {
     UploadFileVo uploadImgFile(MultipartFile file);
 
     UploadFileVo uploadImgBase64(String base64);
+
+    Boolean checkFile(String fileMd5);
+
+    Boolean checkChunk(String fileMd5, int chunk);
+
+    Boolean uploadChunk(MultipartFile file, String fileMd5, int chunk);
+
+    Boolean mergeChunk(String fileMd5, String fileName, long chunkTotal);
 }
