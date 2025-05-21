@@ -7,12 +7,12 @@ import lombok.Data;
 
 /**
  * @author autumn
- * @desc 文件实体
- * @date 2025年05月19日
+ * @desc 媒体文件
+ * @date 2025年05月21日
  */
 @Data
-@TableName("upload_file")
-public class UploadFile {
+@TableName("meda_file")
+public class MediaFile {
 
     /**
      * 文件md5
@@ -34,6 +34,4 @@ public class UploadFile {
      * 文件浏览地址
      */
     String reviewUrl;
-
-
 }
