@@ -47,7 +47,7 @@ public class RevokeAccessTokenLogoutHandler implements LogoutHandler {
         String token = request.getHeader("Authorization");
         if (ObjectUtils.isEmpty(token)) {
             // 写回json数据
-            R<String> result = R.fail("token is empty");
+            R<String> result = R.success();
             response.setCharacterEncoding(StandardCharsets.UTF_8.name());
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             response.getWriter().write(JsonUtils.objectCovertToJson(result));

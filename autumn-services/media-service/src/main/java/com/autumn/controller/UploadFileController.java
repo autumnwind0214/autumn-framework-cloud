@@ -26,7 +26,7 @@ public class UploadFileController {
     }
 
     @PostMapping("/imgBase64")
-    public UploadFileVo uploadImgFileBase64(@RequestParam("file") String base64) {
+    public UploadFileVo uploadImgFileBase64(@RequestParam("base64") String base64) {
         return uploadFileService.uploadImgBase64(base64);
     }
 
