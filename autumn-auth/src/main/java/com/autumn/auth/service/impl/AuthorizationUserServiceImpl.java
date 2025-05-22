@@ -16,8 +16,6 @@ import com.autumn.common.core.exception.AutumnException;
 import com.autumn.common.core.result.ResultCodeEnum;
 import com.autumn.common.core.utils.EncryptUtils;
 import com.autumn.common.core.utils.MapstructUtils;
-import com.autumn.common.oss.client.OssClient;
-import com.autumn.common.oss.result.OSSResult;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -49,8 +47,6 @@ public class AuthorizationUserServiceImpl extends ServiceImpl<AuthorizationUserM
     private final AuthorizationUserMapper authorizationUserMapper;
 
     private final UserRoleMapper userRoleMapper;
-
-    private final OssClient ossClient;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -174,15 +170,9 @@ public class AuthorizationUserServiceImpl extends ServiceImpl<AuthorizationUserM
 
     @Override
     public Boolean uploadAvatar(UserAvatarDto dto) {
-        OSSResult result = null;
-        try {
-            result = ossClient.uploadImg(dto.getAvatar());
-        } catch (Exception e) {
-            throw new AutumnException(ResultCodeEnum.INTERNAL_SERVER_ERROR, "文件上传失败");
-        }
         AuthorizationUser user = new AuthorizationUser();
         user.setId(dto.getUserId());
-        user.setAvatar(result.getReviewUrl());
+        user.setAvatar(dto.getReviewUrl());
         return updateById(user);
     }
 

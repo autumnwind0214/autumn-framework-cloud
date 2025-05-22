@@ -14,7 +14,7 @@ import java.io.File;
  * @date 2025年05月19日
  */
 @RestController
-@RequestMapping("/upload/file")
+@RequestMapping("/upload")
 @RequiredArgsConstructor
 public class UploadFileController {
 

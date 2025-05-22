@@ -48,6 +48,7 @@ public class MediaFileServiceImpl extends ServiceImpl<MediaFileMapper, MediaFile
             OSSResult ossResult = ossClient.uploadImg(file, extension);
             uploadFileVo.setFilename(ossResult.getFilename());
             uploadFileVo.setReviewUrl(ossResult.getReviewUrl());
+            uploadFileVo.setOriginName(file.getOriginalFilename());
             return uploadFileVo;
         } catch (Exception e) {
             throw new AutumnException(ResultCodeEnum.FILE_UPLOAD_ERROR);

@@ -16,5 +16,5 @@ public class UserAvatarDto {
     Long userId;
 
     @NotBlank
-    String avatar;
+    String reviewUrl;
 }

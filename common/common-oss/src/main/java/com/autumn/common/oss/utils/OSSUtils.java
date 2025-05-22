@@ -22,7 +22,7 @@ public class OSSUtils {
      * 获取文件后缀
      */
     public static String getExtension(MultipartFile file) {
-        return FilenameUtils.getExtension(file.getName());
+        return FilenameUtils.getExtension(file.getOriginalFilename());
     }
 
     public static String getExtension(String filename) {
