@@ -1,10 +1,12 @@
 package com.autumn.controller;
 
 import com.autumn.model.vo.UploadFileVo;
-import com.autumn.service.IUploadFileService;
+import com.autumn.service.IMediaFileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
 
 /**
  * @author autumn
@@ -16,7 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class UploadFileController {
 
-    private final IUploadFileService uploadFileService;
+    private final IMediaFileService uploadFileService;
 
     @PostMapping("/img")
     public UploadFileVo uploadImgFile(@RequestParam("file") MultipartFile file) {
@@ -64,8 +66,13 @@ public class UploadFileController {
     @PostMapping("/uploadChunk")
     public Boolean uploadChunk(@RequestParam("file") MultipartFile file,
                                @RequestParam("fileMd5") String fileMd5,
-                               @RequestParam("chunk") int chunk) {
-        return uploadFileService.uploadChunk(file, fileMd5, chunk);
+                               @RequestParam("chunk") int chunk) throws Exception{
+        // 创建临时文件
+        File tempFile = File.createTempFile("minio", ".temp");
+        file.transferTo(tempFile);
+        // 文件路径
+        String localFilePath = tempFile.getAbsolutePath();
+        return uploadFileService.uploadChunk(localFilePath, fileMd5, chunk);
     }
 
     /**

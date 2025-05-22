@@ -2,25 +2,23 @@ package com.autumn.common.oss.client;
 
 import com.autumn.common.core.exception.AutumnException;
 import com.autumn.common.core.result.ResultCodeEnum;
-import com.autumn.common.oss.constant.OSSConstant;
 import com.autumn.common.oss.result.OSSResult;
 import com.autumn.common.oss.utils.OSSUtils;
 import io.minio.*;
 import io.minio.errors.*;
-import io.minio.messages.Tags;
+import io.minio.messages.DeleteError;
+import io.minio.messages.DeleteObject;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
-import java.math.BigInteger;
 import java.security.InvalidKeyException;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.autumn.common.oss.properties.MinioProperties;
 import org.springframework.web.multipart.MultipartFile;
@@ -143,15 +141,105 @@ public class OssClient {
         return result;
     }
 
-    public String getFileMd5(String filepath) throws Exception {
-        StatObjectResponse stat = minioClient.statObject(
-                StatObjectArgs.builder()
-                        .bucket(minioProperties.getMediaBucket())
-                        .object(filepath)
-                        .build()
-        );
-        return stat.etag();
+    public Boolean uploadFile(String localFilePath, String filePath, String contentType) {
+        UploadObjectArgs build = null;
+        try {
+            build = UploadObjectArgs.builder()
+                    .bucket(minioProperties.getMediaBucket())
+                    .contentType(contentType)
+                    .filename(localFilePath)
+                    .object(filePath).build();
+            minioClient.uploadObject(build);
+            return true;
+        } catch (Exception e) {
+            log.error("文件上传失败", e);
+            // throw new RuntimeException(e);
+        }
+        return false;
+    }
+
+    public String getFileMd5(String filepath) {
+        try {
+            StatObjectResponse stat = minioClient.statObject(
+                    StatObjectArgs.builder()
+                            .bucket(minioProperties.getMediaBucket())
+                            .object(filepath)
+                            .build()
+            );
+            return stat.etag();
+
+        } catch (Exception e) {
+            log.error("获取文件md5失败", e);
+            return "";
+        }
     }
 
 
+    /**
+     * 检查文件是否存在
+     *
+     * @param filePath 文件路径
+     * @return true 存在 false 不存在
+     */
+    public Boolean checkFile(String filePath) {
+        // 获取对象的元数据以确认其是否存在
+        try {
+            minioClient.statObject(StatObjectArgs.builder()
+                    .bucket(minioProperties.getMediaBucket())
+                    .object(filePath)
+                    .build()
+            );
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+
+    public String mergeChunk(String path, String filePath, String fileName, long chunkTotal) {
+        List<ComposeSource> sources =
+                Stream.iterate(0, item -> ++item)
+                        .limit(chunkTotal)
+                        .map(item -> ComposeSource.builder().bucket(minioProperties.getMediaBucket())
+                                .object(path + item).build())
+                        .toList();
+        // 指定合并后的objectName等信息
+        ComposeObjectArgs build = ComposeObjectArgs.builder()
+                .bucket(minioProperties.getMediaBucket())
+                .object(filePath)
+                .sources(sources)
+                .build();
+        try {
+            minioClient.composeObject(build);
+            log.info("文件合并成功,filePath:{}", filePath);
+            return minioProperties.getMediaUrl() + filePath;
+        } catch (Exception e) {
+            log.error("文件合并失败", e);
+            throw new AutumnException(ResultCodeEnum.FILE_MERGE_ERROR);
+        }
+    }
+
+    public void removeChunkFiles(String chunkFileFolderPath, long chunkTotal) {
+        try {
+            List<DeleteObject> deleteObjects = Stream.iterate(0, i -> ++i)
+                    .limit(chunkTotal)
+                    .map(i -> new DeleteObject(chunkFileFolderPath.concat(Integer.toString(i))))
+                    .collect(Collectors.toList());
+
+            RemoveObjectsArgs removeObjectsArgs = RemoveObjectsArgs.builder().bucket("video").objects(deleteObjects).build();
+            Iterable<Result<DeleteError>> results = minioClient.removeObjects(removeObjectsArgs);
+            results.forEach(r -> {
+                try {
+                    DeleteError deleteError = r.get();
+                } catch (Exception e) {
+                    log.error("删除分块文件失败,chunkFileFolderPath:{}", chunkFileFolderPath, e);
+                    throw new RuntimeException(e);
+                }
+
+            });
+        } catch (Exception e) {
+            log.error("清楚分块文件失败,chunkFileFolderPath:{}", chunkFileFolderPath, e);
+            throw new RuntimeException(e);
+        }
+    }
 }

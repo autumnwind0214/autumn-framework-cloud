@@ -1,6 +1,6 @@
 package com.autumn.service;
 
-import com.autumn.entity.UploadFile;
+import com.autumn.entity.MediaFile;
 import com.autumn.model.vo.UploadFileVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.springframework.web.multipart.MultipartFile;
@@ -10,7 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
  * @desc 上传文件接口
  * @date 2025年05月19日
  */
-public interface IUploadFileService extends IService<UploadFile> {
+public interface IMediaFileService extends IService<MediaFile> {
     UploadFileVo uploadImgFile(MultipartFile file);
 
     UploadFileVo uploadImgBase64(String base64);
@@ -19,7 +19,7 @@ public interface IUploadFileService extends IService<UploadFile> {
 
     Boolean checkChunk(String fileMd5, int chunk);
 
-    Boolean uploadChunk(MultipartFile file, String fileMd5, int chunk);
+    Boolean uploadChunk(String localFilePath, String fileMd5, int chunk);
 
     Boolean mergeChunk(String fileMd5, String fileName, long chunkTotal);
 }
