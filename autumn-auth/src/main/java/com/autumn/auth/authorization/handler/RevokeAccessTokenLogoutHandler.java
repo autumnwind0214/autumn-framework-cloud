@@ -57,9 +57,10 @@ public class RevokeAccessTokenLogoutHandler implements LogoutHandler {
         }
         // 撤销token逻辑
         Integer port = serverProperties.getPort();
+        String hostUrl = request.getRequestURL() == null ? HOST_URL : String.valueOf(request.getRequestURL());
 
         // 撤销token地址
-        String revokeUrl = HOST_URL
+        String revokeUrl = hostUrl
                 + (port == null ? "8080" : port)
                 // 默认是/oauth2/revoke
                 + authorizationServerSettings.getTokenRevocationEndpoint();

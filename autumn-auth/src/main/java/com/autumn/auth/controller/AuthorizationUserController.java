@@ -102,11 +102,13 @@ public class AuthorizationUserController {
         return R.success(authorizationUserService.changePassword(dto));
     }
 
+    @PreAuthorize("hasAuthority('system:user:edit')")
     @PutMapping("/uploadAvatar")
     public R<Boolean> uploadAvatar(@Validated @RequestBody UserAvatarDto dto) {
         return R.success(authorizationUserService.uploadAvatar(dto));
     }
 
+    @PreAuthorize("hasAuthority('system:user:edit')")
     @PutMapping("/mine")
     public R<Boolean> putMine(@Validated(UpdateGroup.class) @RequestBody UserDto dto) {
         return R.success(authorizationUserService.edit(dto));

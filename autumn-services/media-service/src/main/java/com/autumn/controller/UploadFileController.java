@@ -20,9 +20,9 @@ public class UploadFileController {
 
     private final IMediaFileService uploadFileService;
 
-    @PostMapping("/img")
-    public UploadFileVo uploadImgFile(@RequestParam("file") MultipartFile file) {
-        return uploadFileService.uploadImgFile(file);
+    @PostMapping("/file")
+    public UploadFileVo uploadFile(@RequestParam("file") MultipartFile file) {
+        return uploadFileService.uploadFile(file);
     }
 
     @PostMapping("/imgBase64")

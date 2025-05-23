@@ -4,7 +4,7 @@
 
 <mirror>
     <id>aliyunmaven</id>
-    <mirrorOf>*,!spring-milestones</mirrorOf>
+    <mirrorOf>*,!spring-milestones,!spring-snapshots,!central-portal-snapshots</mirrorOf>
     <name>阿里云公共仓库</name>
     <url>https://maven.aliyun.com/repository/public</url>
 </mirror>

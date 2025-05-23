@@ -11,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
  * @date 2025年05月19日
  */
 public interface IMediaFileService extends IService<MediaFile> {
-    UploadFileVo uploadImgFile(MultipartFile file);
+    UploadFileVo uploadFile(MultipartFile file);
 
     UploadFileVo uploadImgBase64(String base64);
 

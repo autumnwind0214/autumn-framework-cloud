@@ -38,14 +38,13 @@ public class MediaFileServiceImpl extends ServiceImpl<MediaFileMapper, MediaFile
 
 
     @Override
-    public UploadFileVo uploadImgFile(MultipartFile file) {
+    public UploadFileVo uploadFile(MultipartFile file) {
         String extension = OSSUtils.getExtension(file);
-        checkType(extension, "img");
+        checkType(extension);
         try {
             UploadFileVo uploadFileVo = new UploadFileVo();
             // 获取文件扩展名
-
-            OSSResult ossResult = ossClient.uploadImg(file, extension);
+            OSSResult ossResult = ossClient.uploadFile(file, extension);
             uploadFileVo.setFilename(ossResult.getFilename());
             uploadFileVo.setReviewUrl(ossResult.getReviewUrl());
             uploadFileVo.setOriginName(file.getOriginalFilename());
@@ -134,30 +133,10 @@ public class MediaFileServiceImpl extends ServiceImpl<MediaFileMapper, MediaFile
         }
     }
 
-    private void checkType(String extension, String type) {
-        switch (type) {
-            case "img" -> {
-                if (!Arrays.asList(FileTypeConstant.IMG_TYPE).contains(extension)) {
-                    throw new AutumnException(ResultCodeEnum.IMG_TYPE_ERROR);
-                }
-            }
-            case "video" -> {
-                if (!Arrays.asList(FileTypeConstant.VIDEO_TYPE).contains(extension)) {
-                    throw new AutumnException(ResultCodeEnum.VIDEO_TYPE_ERROR);
-                }
-            }
-            case "audio" -> {
-                if (!Arrays.asList(FileTypeConstant.AUDIO_TYPE).contains(extension)) {
-                    throw new AutumnException(ResultCodeEnum.AUDIO_TYPE_ERROR);
-                }
-            }
-            case "doc" -> {
-                if (!Arrays.asList(FileTypeConstant.DOC_TYPE).contains(extension)) {
-                    throw new AutumnException(ResultCodeEnum.DOC_TYPE_ERROR);
-                }
-            }
+    private void checkType(String extension) {
+        if (!Arrays.asList(FileTypeConstant.FILE_TYPE).contains(extension)) {
+            throw new AutumnException(ResultCodeEnum.FILE_TYPE_ERROR);
         }
-
     }
 
     /**

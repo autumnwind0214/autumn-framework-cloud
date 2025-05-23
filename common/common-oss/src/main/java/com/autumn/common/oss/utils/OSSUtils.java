@@ -49,8 +49,8 @@ public class OSSUtils {
         return UuidUtils.getUuid() + "." + extension;
     }
 
-    // 获取图片文件目录
-    public static String getImgFolderPath() {
+    // 获取文件目录
+    public static String getFileFolderPath() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         return OSSConstant.IMG + sdf.format(new Date()).replace("-", "/") + "/";
     }

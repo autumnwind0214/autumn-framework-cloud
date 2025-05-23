@@ -10,21 +10,10 @@ public class FileTypeConstant {
     /**
      * 支持的图片类型
      */
-    public static final String[] IMG_TYPE = new String[]{"jpg", "jpeg", "png", "gif"};
-
-    /**
-     * 支持的视频类型
-     */
-    public static final String[] VIDEO_TYPE = new String[]{"mp4", "avi", "wmv", "mov", "flv", "mkv"};
-
-
-    /**
-     * 支持的音频类型
-     */
-    public static final String[] AUDIO_TYPE = new String[]{"mp3", "wav", "ogg", "flac"};
-
-    /**
-     * 支持的文档类型
-     */
-    public static final String[] DOC_TYPE = new String[]{"doc", "docx", "xls", "xlsx", "ppt", "pptx", "pdf", "txt"};
+    public static final String[] FILE_TYPE = new String[]{"jpg", "jpeg", "png", "gif",
+            "mp4", "avi", "wmv", "mov", "flv", "mkv",
+            "mp3", "wav", "ogg", "flac",
+            "doc", "docx", "xls", "xlsx", "ppt", "pptx", "pdf", "txt",
+            "rar", "zip", "7z", "tar", "gz"
+    };
 }

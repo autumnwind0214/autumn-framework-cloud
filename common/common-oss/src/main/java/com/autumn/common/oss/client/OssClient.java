@@ -118,12 +118,12 @@ public class OssClient {
         return result;
     }
 
-    public OSSResult uploadImg(MultipartFile file, String extension) throws Exception {
+    public OSSResult uploadFile(MultipartFile file, String extension) throws Exception {
         OSSResult result = new OSSResult();
         // 生成唯一文件名
         String filename = OSSUtils.getFilename(extension);
-        // 获取图片上传目录
-        String folderPath = OSSUtils.getImgFolderPath();
+        // 获取文件上传目录
+        String folderPath = OSSUtils.getFileFolderPath();
 
         // 构建PutObjectArgs对象
         PutObjectArgs build = PutObjectArgs.builder()
@@ -153,7 +153,6 @@ public class OssClient {
             return true;
         } catch (Exception e) {
             log.error("文件上传失败", e);
-            // throw new RuntimeException(e);
         }
         return false;
     }
