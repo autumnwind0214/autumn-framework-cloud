@@ -100,7 +100,7 @@ public class OssClient {
         // 生成唯一文件名
         String filename = OSSUtils.getFilename(imageType);
         // 获取图片上传目录
-        String folderPath = OSSUtils.getImgFolderPath();
+        String folderPath = OSSUtils.getFileFolderPath();
 
         // 构建PutObjectArgs对象
         PutObjectArgs build = PutObjectArgs.builder()

@@ -86,10 +86,14 @@ public class AuthorizationUserServiceImpl extends ServiceImpl<AuthorizationUserM
 
         return User.withUsername(String.valueOf(authorizationUser.getId()))
                 .password(authorizationUser.getPassword())
-                .disabled(!authorizationUser.isEnabled())
-                .accountLocked(!authorizationUser.isAccountNonLocked())
-                .accountExpired(!authorizationUser.isAccountNonExpired())
-                .credentialsExpired(!authorizationUser.isCredentialsNonExpired())
+                // true 禁用 false  启用
+                .disabled(authorizationUser.isEnabled())
+                // true 锁定 false  解锁
+                .accountLocked(authorizationUser.isAccountNonLocked())
+                // true 过期 false  不过期
+                .accountExpired(authorizationUser.isAccountNonExpired())
+                // true 凭证过期 false  不过期
+                .credentialsExpired(authorizationUser.isCredentialsNonExpired())
                 .authorities(authorities)
                 .build();
     }
