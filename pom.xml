@@ -44,6 +44,7 @@
         <jetcache-latest-version>2.7.4</jetcache-latest-version>
         <jedis-version>4.3.1</jedis-version>
         <alibaba-ai-version>1.0.0-M5.1</alibaba-ai-version>
+        <pagehelper-version>2.1.0</pagehelper-version>
     </properties>
 
     <dependencyManagement>
@@ -196,6 +197,13 @@
                 <groupId>redis.clients</groupId>
                 <artifactId>jedis</artifactId>
                 <version>${jedis-version}</version>
+            </dependency>
+
+
+            <dependency>
+                <groupId>com.github.pagehelper</groupId>
+                <artifactId>pagehelper-spring-boot-starter</artifactId>
+                <version>${pagehelper-version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

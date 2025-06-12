@@ -15,6 +15,7 @@
         <module>common-sensitive</module>
         <module>common-oss</module>
         <module>common-rabbitmq</module>
+        <module>common-mongodb</module>
     </modules>
 
     <artifactId>common</artifactId>

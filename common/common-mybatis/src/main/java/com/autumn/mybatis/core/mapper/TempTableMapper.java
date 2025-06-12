@@ -1,7 +1,7 @@
 package com.autumn.mybatis.core.mapper;
 
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Update;
-import org.mapstruct.Mapper;
 
 /**
  * @author autumn
