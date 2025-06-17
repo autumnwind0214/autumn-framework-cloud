@@ -146,6 +146,11 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
         });
     }
 
+    /**
+     * 获取路由表
+     * @param userId 用户id
+     * @return 路由表
+     */
     private List<RouteVo> getRouteList(Long userId) {
         List<RouteVo> treeList = new ArrayList<>();
         // 查询用户具有的menu_id
