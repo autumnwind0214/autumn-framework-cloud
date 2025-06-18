@@ -13,6 +13,11 @@ public class SecurityConstants {
     public static final String LOGIN_TYPE = "loginType";
 
     /**
+     * 授权方式请求参数名
+     */
+    public static final String GRANT_TYPE = "grant_type";
+
+    /**
      * 用户唯一id
      */
     public static final String TOKEN_UNIQUE_ID = "uniqueId";

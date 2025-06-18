@@ -65,7 +65,7 @@ public class AutumnLoginAuthenticationProvider extends CaptchaAuthenticationProv
         HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
 
         // 获取当前登录方式
-        String loginType = request.getParameter("loginType");
+        // String loginType = request.getParameter("loginType");
         // 获取grant_type
         String grantType = request.getParameter("grant_type");
         // 短信登录和自定义短信认证grant type会走下方认证
