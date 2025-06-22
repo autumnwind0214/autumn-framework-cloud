@@ -61,7 +61,7 @@ public class FederatedIdentityIdTokenCustomizer implements OAuth2TokenCustomizer
         if (context.getPrincipal().getPrincipal() instanceof BasicOAuth2User user) {
             JwtClaimsSet.Builder claims = context.getClaims();
             // 同时检验是否为String和是否不为空
-            claims.claim(SecurityConstants.LOGIN_TYPE, user.getType());
+            claims.claim(SecurityConstants.GRANT_TYPE, user.getType());
             claims.claim(SecurityConstants.TOKEN_UNIQUE_ID, user.getUniqueId());
 
             // 获取用户的权限

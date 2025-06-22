@@ -4,10 +4,13 @@ package com.autumn.auth.authorization.grant;
 import com.autumn.auth.constant.SecurityConstants;
 import com.autumn.auth.local.GrantThreadLocal;
 import com.autumn.auth.utils.SecurityUtils;
+import com.autumn.common.auth.utils.RSAUtils;
 import com.autumn.common.core.exception.AutumnException;
 import com.autumn.common.core.result.ResultCodeEnum;
 import com.autumn.common.core.utils.EncryptUtils;
+import com.autumn.common.redis.core.RedisOperator;
 import lombok.extern.slf4j.Slf4j;
+import org.bouncycastle.jcajce.provider.asymmetric.RSA;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -52,6 +55,8 @@ public class AutumnGrantAuthenticationProvider implements AuthenticationProvider
     private AuthenticationManager authenticationManager;
 
     private OAuth2AuthorizationService authorizationService;
+
+    private RedisOperator<String> redisOperator;
 
     private static final String ERROR_URI = "https://datatracker.ietf.org/doc/html/rfc6749#section-5.2";
 
@@ -226,14 +231,15 @@ public class AutumnGrantAuthenticationProvider implements AuthenticationProvider
                 String phone = (String) additionalParameters.get(SecurityConstants.OAUTH_PARAMETER_NAME_PHONE);
                 String smsCaptcha = (String) additionalParameters.get(SecurityConstants.OAUTH_PARAMETER_NAME_PHONE_CAPTCHA);
                 // 构建UsernamePasswordAuthenticationToken通过AbstractUserDetailsAuthenticationProvider及其子类对手机号与验证码进行校验
-                 unauthenticated = UsernamePasswordAuthenticationToken.unauthenticated(phone, smsCaptcha);
+                unauthenticated = UsernamePasswordAuthenticationToken.unauthenticated(phone, smsCaptcha);
             }
             case SecurityConstants.PASSWORD_LOGIN_TYPE -> {
                 // 密码登录
                 String username = (String) additionalParameters.get(SecurityConstants.OAUTH_PARAMETER_NAME_USERNAME);
                 String password = (String) additionalParameters.get(SecurityConstants.OAUTH_PARAMETER_NAME_PASSWORD);
+                String privateKey = redisOperator.get(RSAUtils.RSA_PRIVATE_KEY);
                 // 密码解密
-                password = EncryptUtils.decrypt(password);
+                password = RSAUtils.decrypt(password, privateKey);
                 // 构建UsernamePasswordAuthenticationToken通过AbstractUserDetailsAuthenticationProvider及其子类对用户名与密码进行校验
                 unauthenticated = UsernamePasswordAuthenticationToken.unauthenticated(username, password);
             }
@@ -247,7 +253,8 @@ public class AutumnGrantAuthenticationProvider implements AuthenticationProvider
             default -> {
                 log.info("Not loginType, exit.");
                 // 其它调用父类默认实现的密码方式登录
-                unauthenticated = UsernamePasswordAuthenticationToken.unauthenticated(authenticationToken.getPrincipal(), authenticationToken.getCredentials());
+                unauthenticated = UsernamePasswordAuthenticationToken.unauthenticated(authenticationToken.getPrincipal(),
+                        authenticationToken.getCredentials());
             }
         }
 
@@ -284,5 +291,10 @@ public class AutumnGrantAuthenticationProvider implements AuthenticationProvider
     public void setAuthorizationService(OAuth2AuthorizationService authorizationService) {
         Assert.notNull(authorizationService, "authorizationService cannot be null");
         this.authorizationService = authorizationService;
+    }
+
+    public void setRedisOperator(RedisOperator<String> redisOperator) {
+        Assert.notNull(redisOperator, "redisOperator cannot be null");
+        this.redisOperator = redisOperator;
     }
 }
