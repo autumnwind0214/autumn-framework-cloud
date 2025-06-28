@@ -94,8 +94,10 @@ public class AuthorizationController {
 
     @Data
     public static class ScopeWithDescription {
-        private static final String DEFAULT_DESCRIPTION = "UNKNOWN SCOPE - We cannot provide information about this permission, use caution when granting this.";
+        private static final String DEFAULT_DESCRIPTION = "UNKNOWN SCOPE - We cannot provide information about this permission, use caution when " +
+                "granting this.";
         private static final Map<String, String> SCOPE_DESCRIPTIONS = new HashMap<>();
+
         static {
             SCOPE_DESCRIPTIONS.put(
                     OidcScopes.PROFILE,

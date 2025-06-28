@@ -12,6 +12,8 @@ public class SecurityConstants {
      */
     public static final String LOGIN_TYPE = "loginType";
 
+    public static final String GRANT_TYPE = "grant_type";
+
     /**
      * 授权方式请求参数名
      */

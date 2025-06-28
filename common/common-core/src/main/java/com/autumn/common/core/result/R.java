@@ -9,16 +9,17 @@ import lombok.Data;
  */
 @Data
 public class R<T> {
-    //返回码
+    // 返回码
     private Integer code;
 
-    //返回消息
+    // 返回消息
     private String message;
 
-    //返回数据
+    // 返回数据
     private T data;
 
-    public R(){}
+    public R() {
+    }
 
     public R(String message) {
         this.message = message;
@@ -47,38 +48,38 @@ public class R<T> {
         return result;
     }
 
-    public static<T> R<T> success(){
+    public static <T> R<T> success() {
         return R.success(null);
     }
 
     /**
      * 操作成功
      */
-    public static<T> R<T> success(T data){
+    public static <T> R<T> success(T data) {
         return build(data, ResultCodeEnum.SUCCESS);
     }
 
-    public static<T> R<T> fail(){
+    public static <T> R<T> fail() {
         return fail(ResultCodeEnum.BAD_REQUEST);
     }
 
     /**
      * 操作失败
      */
-    public static<T> R<T> fail(ResultCodeEnum resultCodeEnum){
+    public static <T> R<T> fail(ResultCodeEnum resultCodeEnum) {
         return build(null, resultCodeEnum);
     }
 
-    public static<T> R<T> fail(String message) {
+    public static <T> R<T> fail(String message) {
         return build(null, ResultCodeEnum.BAD_REQUEST.getCode(), message);
     }
 
-    public R<T> message(String msg){
+    public R<T> message(String msg) {
         this.setMessage(msg);
         return this;
     }
 
-    public R<T> code(Integer code){
+    public R<T> code(Integer code) {
         this.setCode(code);
         return this;
     }

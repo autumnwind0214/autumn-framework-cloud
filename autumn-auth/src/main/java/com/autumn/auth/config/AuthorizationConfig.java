@@ -172,6 +172,7 @@ public class AuthorizationConfig {
         provider.setTokenGenerator(tokenGenerator);
         provider.setAuthorizationService(authorizationService);
         provider.setAuthenticationManager(authenticationManager);
+        provider.setRedisOperator(redisOperator);
 
         return build;
     }
@@ -409,7 +410,7 @@ public class AuthorizationConfig {
      *
      * @return 密钥对
      */
-    private static KeyPair generateRsaKey() {
+    public static KeyPair generateRsaKey() {
         KeyPair keyPair;
         try {
             KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
