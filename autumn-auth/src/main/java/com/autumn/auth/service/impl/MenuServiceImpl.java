@@ -1,10 +1,7 @@
 package com.autumn.auth.service.impl;
 
 
-import com.alicp.jetcache.Cache;
-import com.alicp.jetcache.CacheManager;
-import com.alicp.jetcache.anno.CacheType;
-import com.alicp.jetcache.template.QuickConfig;
+
 import com.autumn.auth.entity.AuthorizationUser;
 import com.autumn.auth.entity.Menu;
 import com.autumn.auth.enums.MenuTypeEnum;
@@ -50,9 +47,9 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
 
     private final RedisOperator<List<RouteVo>> redisOperator;
 
-    private final CacheManager cacheManager;
-
-    private Cache<String, List<RouteVo>> routeVoCache;
+    // private final CacheManager cacheManager;
+    //
+    // private Cache<String, List<RouteVo>> routeVoCache;
 
     private final IAuthorizationUserService authorizationUserService;
 
@@ -141,10 +138,10 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
         wrapper.select(AuthorizationUser::getId);
         authorizationUserService.list(wrapper).forEach(user -> {
             String key = RedisConstant.ASYNC_ROUTES_PREFIX_KEY + user.getId();
-            if(!CollectionUtils.isEmpty(routeVoCache.get(key))) {
-                List<RouteVo> list = getRouteList(user.getId());
-                // routeVoCache.put(key, list);
-            }
+            // if(!CollectionUtils.isEmpty(routeVoCache.get(key))) {
+            //     List<RouteVo> list = getRouteList(user.getId());
+            //     routeVoCache.put(key, list);
+            // }
         });
     }
 

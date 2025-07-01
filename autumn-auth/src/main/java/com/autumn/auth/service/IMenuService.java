@@ -1,8 +1,6 @@
 package com.autumn.auth.service;
 
 
-import com.alicp.jetcache.anno.CacheType;
-import com.alicp.jetcache.anno.Cached;
 import com.autumn.auth.entity.Menu;
 import com.autumn.auth.model.dto.MenuDto;
 import com.autumn.auth.model.vo.MenuVo;

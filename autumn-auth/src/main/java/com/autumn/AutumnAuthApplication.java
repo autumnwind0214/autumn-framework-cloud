@@ -1,6 +1,5 @@
 package com.autumn;
 
-import com.alicp.jetcache.anno.config.EnableMethodCache;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -12,7 +11,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
  */
 @EnableDiscoveryClient
 @SpringBootApplication
-@EnableMethodCache(basePackages = "com.autumn.auth")
+// @EnableMethodCache(basePackages = "com.autumn.auth")
 public class AutumnAuthApplication {
     public static void main(String[] args) {
         SpringApplication.run(AutumnAuthApplication.class, args);

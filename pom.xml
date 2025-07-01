@@ -42,6 +42,7 @@
         <mapstruct-plus-lombok-version>0.2.0</mapstruct-plus-lombok-version>
         <simplemagic-version>1.17</simplemagic-version>
         <jetcache-latest-version>2.7.4</jetcache-latest-version>
+        <jetcache-version>2.7.8</jetcache-version>
         <jedis-version>4.3.1</jedis-version>
         <alibaba-ai-version>1.0.0-M5.1</alibaba-ai-version>
         <pagehelper-version>2.1.0</pagehelper-version>
@@ -187,10 +188,23 @@
             </dependency>
 
             <!--jetcache-->
+<!--            <dependency>-->
+<!--                <groupId>com.alicp.jetcache</groupId>-->
+<!--                <artifactId>jetcache-starter-redis</artifactId>-->
+<!--                <version>${jetcache-latest-version}</version>-->
+<!--            </dependency>-->
+<!--            <dependency>-->
+<!--                <groupId>com.alicp.jetcache</groupId>-->
+<!--                <artifactId>jetcache-starter-redisson</artifactId>-->
+<!--                <version>${jetcache-latest-version}</version>-->
+<!--            </dependency>-->
+
             <dependency>
                 <groupId>com.alicp.jetcache</groupId>
-                <artifactId>jetcache-starter-redis</artifactId>
-                <version>${jetcache-latest-version}</version>
+                <artifactId>jetcache-bom</artifactId>
+                <version>${jetcache-version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
 
             <dependency>

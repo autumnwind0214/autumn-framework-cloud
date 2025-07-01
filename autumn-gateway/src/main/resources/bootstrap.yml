@@ -23,7 +23,7 @@ spring:
         password: ${spring.application.password}
         namespace: ${spring.application.namespace}
         server-addr: ${spring.application.ip}
-        prefix: ${spring.application.name}
+        prefix: ${spring.application.name}.yml
         file-extension: yaml
         group: ${spring.profiles.active}
 #  security:
