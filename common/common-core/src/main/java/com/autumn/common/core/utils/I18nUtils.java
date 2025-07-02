@@ -4,9 +4,8 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 /**
+ * 国际化工具类
  * @author autumn
- * @desc 国际化工具类
- * @date 2025年05月14日
  */
 public class I18nUtils {
     public static String getMessage(String key, Locale locale) {

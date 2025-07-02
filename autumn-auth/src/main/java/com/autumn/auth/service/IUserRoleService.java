@@ -14,4 +14,5 @@ public interface IUserRoleService extends IService<UserRole> {
 
     Boolean putAssignRole(UserRoleDto dto);
 
+    String[] codes(Long userId);
 }

@@ -49,9 +49,8 @@ import java.util.Locale;
  */
 
 /**
+ * 统一返回结果状态信息类
  * @author autumn
- * @desc 统一返回结果状态信息类
- * @date 2025年05月07日
  */
 @Getter
 public enum ResultCodeEnum {

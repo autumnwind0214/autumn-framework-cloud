@@ -16,8 +16,6 @@ import java.util.List;
 
 /**
  * @author autumn
- * @desc UserRoleServiceImpl
- * @date 2025年05月03日
  */
 @Service
 @RequiredArgsConstructor
@@ -39,5 +37,11 @@ public class UserRoleServiceImpl extends ServiceImpl<UserRoleMapper, UserRole> i
             list.add(userRole);
         }
         return saveBatch(list);
+    }
+
+    @Override
+    public String[] codes(Long userId) {
+        List<String> list = userRoleMapper.queryPermissionByUserId(userId);
+        return list.toArray(new String[0]);
     }
 }
