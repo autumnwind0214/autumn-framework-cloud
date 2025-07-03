@@ -52,8 +52,7 @@ public class MenuController {
     }
 
     // 编辑
-    // @PreAuthorize("hasAuthority('system:menu:edit') || hasRole('admin')")
-    @PreAuthorize("hasRole('admin')")
+    @PreAuthorize("hasRole('admin') || hasAuthority('system:menu:edit')")
     @PutMapping
     public R<Boolean> edit(@RequestBody MenuDto dto) {
         Boolean result = menuService.updateMenu(dto);
