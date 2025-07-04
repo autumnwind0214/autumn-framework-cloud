@@ -11,9 +11,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * Mapstruct 工具类
  * @author autumn
- * @desc Mapstruct 工具类
- * @date 2025年05月12日
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MapstructUtils {

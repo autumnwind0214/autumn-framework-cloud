@@ -28,6 +28,7 @@
         <cloud-version>2023.0.1</cloud-version>
         <alibaba-version>2023.0.1.2</alibaba-version>
         <mybatis-plus-version>3.5.9</mybatis-plus-version>
+        <mybatis-plus-join-version>1.5.3</mybatis-plus-join-version>
         <mysql-version>8.0.33</mysql-version>
         <knife4j-version>4.1.0</knife4j-version>
         <fastjson2-version>2.0.57</fastjson2-version>
@@ -42,6 +43,7 @@
         <mapstruct-plus-lombok-version>0.2.0</mapstruct-plus-lombok-version>
         <simplemagic-version>1.17</simplemagic-version>
         <jetcache-latest-version>2.7.4</jetcache-latest-version>
+        <jetcache-version>2.7.8</jetcache-version>
         <jedis-version>4.3.1</jedis-version>
         <alibaba-ai-version>1.0.0-M5.1</alibaba-ai-version>
         <pagehelper-version>2.1.0</pagehelper-version>
@@ -103,6 +105,12 @@
                 <artifactId>mybatis-plus-jsqlparser-4.9</artifactId>
                 <version>${mybatis-plus-version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.github.yulichang</groupId>
+                <artifactId>mybatis-plus-join-boot-starter</artifactId>
+                <version>${mybatis-plus-join-version}</version>
+            </dependency>
+
             <!--mysql-->
             <dependency>
                 <groupId>mysql</groupId>
@@ -186,11 +194,12 @@
                 <version>${simplemagic-version}</version>
             </dependency>
 
-            <!--jetcache-->
             <dependency>
                 <groupId>com.alicp.jetcache</groupId>
-                <artifactId>jetcache-starter-redis</artifactId>
-                <version>${jetcache-latest-version}</version>
+                <artifactId>jetcache-bom</artifactId>
+                <version>${jetcache-version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
 
             <dependency>

@@ -10,9 +10,8 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
+ * 菜单树形结构
  * @author autumn
- * @desc 菜单树形结构
- * @date 2025年05月02日
  */
 @Data
 public class MenuTreeVo implements TreeAble<MenuTreeVo>, Serializable {

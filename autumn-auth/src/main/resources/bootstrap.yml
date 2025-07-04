@@ -25,14 +25,16 @@ spring:
         password: ${spring.application.password}
         namespace: ${spring.application.namespace}
         server-addr: ${spring.application.ip}
-        prefix: ${spring.application.name}
+        prefix: ${spring.application.name}.yml
         file-extension: yaml
         group: ${spring.profiles.active}
         shared-configs:
           - data-id: common-mybatis.yml
             group: ${spring.profiles.active}
-          - data-id: common-redis.yml
+          - data-id: common-rabbitmq.yml
             group: ${spring.profiles.active}
+#          - data-id: common-redis.yml
+#            group: ${spring.profiles.active}
 logging:
   level:
     org.springframework.security: debug

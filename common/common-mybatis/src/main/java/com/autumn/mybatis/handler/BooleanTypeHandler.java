@@ -9,9 +9,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
+ * 自定义类型处理器，将 tinyint(1) 转换为 Boolean 类型 1==true 0==false
  * @author autumn
- * @desc 自定义类型处理器，将 tinyint(1) 转换为 Boolean 类型 1==true 0==false
- * @date 2025年05月08日
  */
 public class BooleanTypeHandler extends BaseTypeHandler<Boolean> {
 

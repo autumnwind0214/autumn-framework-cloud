@@ -3,7 +3,7 @@ package com.autumn.auth.controller;
 import com.autumn.auth.config.RabbitMqConfig;
 import com.autumn.auth.model.dto.MenuDto;
 import com.autumn.auth.model.vo.MenuVo;
-import com.autumn.auth.model.vo.RouteVo;
+import com.autumn.auth.model.vo.DynamicRouteVo;
 import com.autumn.auth.service.IMenuService;
 import com.autumn.auth.utils.SecurityUtils;
 import com.autumn.common.core.result.R;
@@ -17,7 +17,6 @@ import java.util.List;
 
 /**
  * @author autumn
- * @date 2024年11月15日
  */
 @Slf4j
 @RestController
@@ -31,7 +30,7 @@ public class MenuController {
 
     // 获取动态路由
     @GetMapping("/getAsyncRoutes")
-    public List<RouteVo> getAsyncRoutes() {
+    public List<DynamicRouteVo> getAsyncRoutes() {
         Long userId = SecurityUtils.getCurrentUserId();
         return menuService.getAsyncRoutes(userId);
     }
@@ -52,8 +51,7 @@ public class MenuController {
     }
 
     // 编辑
-    // @PreAuthorize("hasAuthority('system:menu:edit') || hasRole('admin')")
-    @PreAuthorize("hasRole('admin')")
+    @PreAuthorize("hasRole('admin') || hasAuthority('system:menu:edit')")
     @PutMapping
     public R<Boolean> edit(@RequestBody MenuDto dto) {
         Boolean result = menuService.updateMenu(dto);

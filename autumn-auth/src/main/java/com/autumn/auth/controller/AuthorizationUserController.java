@@ -21,9 +21,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Arrays;
 
 /**
+ * 用户管理控制器
  * @author autumn
- * @desc 用户管理控制器
- * @date 2025/4/13 14:02
  **/
 @Slf4j
 @RestController

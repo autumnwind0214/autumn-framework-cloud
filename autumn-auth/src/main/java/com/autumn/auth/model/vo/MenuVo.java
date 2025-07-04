@@ -5,9 +5,8 @@ import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
 
 /**
+ * 菜单返回值
  * @author autumn
- * @desc 菜单返回值
- * @date 2025年04月15日
  */
 @Data
 @AutoMapper(target = Menu.class)
