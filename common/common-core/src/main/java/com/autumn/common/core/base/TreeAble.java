@@ -3,9 +3,8 @@ package com.autumn.common.core.base;
 import java.util.List;
 
 /**
+ * 树形接口
  * @author autumn
- * @desc 树形接口
- * @date 2025年05月13日
  */
 public interface TreeAble<T> {
     Object getId();

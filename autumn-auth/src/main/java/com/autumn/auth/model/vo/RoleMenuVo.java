@@ -7,9 +7,8 @@ import java.io.Serial;
 import java.io.Serializable;
 
 /**
+ * 角色菜单
  * @author autumn
- * @desc 角色菜单
- * @date 2025年05月02日
  */
 @AutoMapper(target = MenuVo.class)
 @Data

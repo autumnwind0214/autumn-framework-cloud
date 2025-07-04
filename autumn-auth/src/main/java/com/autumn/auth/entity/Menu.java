@@ -1,6 +1,7 @@
 package com.autumn.auth.entity;
 
 import com.autumn.auth.model.dto.MenuDto;
+import com.autumn.auth.model.vo.DynamicRouteVo;
 import com.autumn.auth.model.vo.RoleMenuVo;
 import com.autumn.mybatis.core.model.BaseEntity;
 import com.autumn.mybatis.handler.BooleanTypeHandler;
@@ -10,9 +11,6 @@ import io.github.linpeilie.annotations.AutoMappers;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * 菜单
  *
@@ -20,7 +18,9 @@ import java.util.Map;
  */
 @AutoMappers({
         @AutoMapper(target = MenuDto.class),
-        @AutoMapper(target = RoleMenuVo.class)
+        @AutoMapper(target = RoleMenuVo.class),
+        @AutoMapper(target = DynamicRouteVo.class),
+        @AutoMapper(target = DynamicRouteVo.Meta.class)
 })
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -80,30 +80,35 @@ public class Menu extends BaseEntity {
      * 用于配置页面是否开启缓存，开启后页面会缓存，不会重新加载，仅在标签页启用时有效。
      * default: false
      */
+    @TableField(typeHandler = BooleanTypeHandler.class)
     Boolean keepAlive;
 
     /**
      * 用于配置页面是否在菜单中隐藏，隐藏后页面不会在菜单中显示。
      * default: false
      */
+    @TableField(typeHandler = BooleanTypeHandler.class)
     Boolean hideInMenu;
 
     /**
      * 用于配置页面是否在标签页中隐藏，隐藏后页面不会在标签页中显示。
      * default: false
      */
+    @TableField(typeHandler = BooleanTypeHandler.class)
     Boolean hideInTab;
 
     /**
      * 用于配置页面是否在面包屑中隐藏，隐藏后页面不会在面包屑中显示。
      * default: false
      */
+    @TableField(typeHandler = BooleanTypeHandler.class)
     Boolean hideInBreadcrumb;
 
     /**
      * 用于配置页面的子页面是否在菜单中隐藏，隐藏后子页面不会在菜单中显示。
      * default: false
      */
+    @TableField(typeHandler = BooleanTypeHandler.class)
     Boolean hideChildrenInMenu;
 
     /**
@@ -132,6 +137,7 @@ public class Menu extends BaseEntity {
      * 默认值：true
      * 是否将路由的完整路径作为tab key（默认true）
      */
+    @TableField(typeHandler = BooleanTypeHandler.class)
     Boolean fullPathKey;
 
     /**
@@ -148,6 +154,7 @@ public class Menu extends BaseEntity {
      * 默认值：false
      * 用于配置页面是否固定标签页，固定后页面不可关闭。
      */
+    @TableField(typeHandler = BooleanTypeHandler.class)
     Boolean affixTab;
 
     /**
@@ -172,6 +179,7 @@ public class Menu extends BaseEntity {
      * 默认值：false
      * 用于配置页面是否忽略权限，直接可以访问。
      */
+    @TableField(typeHandler = BooleanTypeHandler.class)
     Boolean ignoreAccess;
 
     /**
@@ -180,7 +188,7 @@ public class Menu extends BaseEntity {
      * 默认值：''
      * 用于配置外链跳转路径，会在新窗口打开。
      */
-    String link = "";
+    String link;
 
     /**
      * maxNumOfOpenTab
@@ -196,6 +204,7 @@ public class Menu extends BaseEntity {
      * 默认值：false
      * 用于配置页面在菜单可以看到，但是访问会被重定向到403。
      */
+    @TableField(typeHandler = BooleanTypeHandler.class)
     Boolean menuVisibleWithForbidden;
 
     /**
@@ -204,16 +213,17 @@ public class Menu extends BaseEntity {
      * 默认值：false
      * 设置为 true 时，会在新窗口打开页面。
      */
+    @TableField(typeHandler = BooleanTypeHandler.class)
     Boolean openInNewWindow;
 
     /**
-     * order
+     * sort
      * 类型：number
      * 默认值：0
      * 用于配置页面的排序，用于路由到菜单排序。
      * 注意: 排序仅针对一级菜单有效，二级菜单的排序需要在对应的一级菜单中按代码顺序设置。
      */
-    Integer order;
+    Integer sort;
 
     /**
      * noBasicLayout
@@ -221,7 +231,6 @@ public class Menu extends BaseEntity {
      * 默认值：false
      * 用于配置当前路由不使用基础布局，仅在顶级时生效。默认情况下，所有的路由都会被包裹在基础布局中（包含顶部以及侧边等导航部件），如果你的页面不需要这些部件，可以设置 noBasicLayout 为 true。
      */
+    @TableField(typeHandler = BooleanTypeHandler.class)
     Boolean noBasicLayout;
-
-
 }
