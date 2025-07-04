@@ -51,6 +51,12 @@ public class AuthorizationUserController {
         return authorizationUserService.getUserInfo(userId);
     }
 
+    @GetMapping("/codes")
+    public String[] getCodes() {
+        Long userId = SecurityUtils.getCurrentUserId();
+        return userRoleService.codes(userId);
+    }
+
     @Sensitive
     @PostMapping("/listPage")
     public Page<AuthorizationUserVo> listPage(@RequestBody UserInfoDto dto) {
@@ -69,7 +75,7 @@ public class AuthorizationUserController {
     @PreAuthorize("hasAuthority('system:user:assignRole')")
     @PutMapping("/assignRole")
     public R<Boolean> putAssignRole(@Validated @RequestBody UserRoleDto dto) {
-        return R.success(userRoleService.putAssignRole(dto));
+        return R.success(userRoleService.assignRole(dto));
     }
 
     @PreAuthorize("hasAuthority('system:user:edit')")

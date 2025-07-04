@@ -27,7 +27,7 @@ public class UserRoleServiceImpl extends ServiceImpl<UserRoleMapper, UserRole> i
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Boolean putAssignRole(UserRoleDto dto) {
+    public Boolean assignRole(UserRoleDto dto) {
         userRoleMapper.delete(new LambdaQueryWrapper<UserRole>().eq(UserRole::getUserId, dto.getUserId()));
         List<UserRole> list = new ArrayList<>();
         for (Long roleId : dto.getRoleIds()) {
@@ -39,5 +39,15 @@ public class UserRoleServiceImpl extends ServiceImpl<UserRoleMapper, UserRole> i
             list.add(userRole);
         }
         return saveBatch(list);
+    }
+
+    /**
+     * 获取用户权限码
+     */
+    @Override
+    public String[] codes(Long userId) {
+        // 用户角色权限
+        List<String> rolePermission = userRoleMapper.queryPermissionByUserId(userId);
+        return rolePermission.toArray(new String[0]);
     }
 }

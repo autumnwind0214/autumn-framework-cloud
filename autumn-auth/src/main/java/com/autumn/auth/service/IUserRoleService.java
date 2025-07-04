@@ -12,6 +12,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IUserRoleService extends IService<UserRole> {
 
-    Boolean putAssignRole(UserRoleDto dto);
+    Boolean assignRole(UserRoleDto dto);
 
+    String[] codes(Long userId);
 }
