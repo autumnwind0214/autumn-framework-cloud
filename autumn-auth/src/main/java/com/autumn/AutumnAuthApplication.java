@@ -2,16 +2,17 @@ package com.autumn;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 /**
+ * 授权服务启动类
+ *
  * @author autumn
- * @desc 授权服务启动类
- * @date 2025年05月07日
  */
+@EnableCaching
 @EnableDiscoveryClient
 @SpringBootApplication
-// @EnableMethodCache(basePackages = "com.autumn.auth")
 public class AutumnAuthApplication {
     public static void main(String[] args) {
         SpringApplication.run(AutumnAuthApplication.class, args);

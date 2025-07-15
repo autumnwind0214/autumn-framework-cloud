@@ -22,9 +22,9 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import java.util.Objects;
 
 /**
+ * 验证码校验
+ *
  * @author autumn
- * @desc 验证码校验
- * @date 2025/5/11 21:02
  **/
 @Slf4j
 public class CaptchaAuthenticationProvider extends DaoAuthenticationProvider {

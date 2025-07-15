@@ -6,7 +6,6 @@ import com.autumn.auth.model.dto.MenuDto;
 import com.autumn.auth.model.vo.MenuVo;
 import com.autumn.auth.model.vo.RoleMenuVo;
 import com.autumn.auth.model.vo.DynamicRouteVo;
-import com.autumn.common.core.base.AutumnTreeNode;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;

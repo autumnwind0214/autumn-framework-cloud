@@ -54,7 +54,6 @@ import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.UrlUtils;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
-import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import java.security.KeyPair;
@@ -68,15 +67,15 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 /**
- * @author autumn
- * @desc 认证配置
+ * 认证配置
  * {@link EnableMethodSecurity} 开启全局方法认证，启用JSR250注解支持，启用注解 {@link Secured} 支持，
  * 在Spring Security 6.0版本中将@Configuration注解从@EnableWebSecurity, @EnableMethodSecurity, @EnableGlobalMethodSecurity
  * 和 @EnableGlobalAuthentication 中移除，使用这些注解需手动添加 @Configuration 注解
  * {@link EnableWebSecurity} 注解有两个作用:
  * 1. 加载了WebSecurityConfiguration配置类, 配置安全认证策略。
  * 2. 加载了AuthenticationConfiguration, 配置了认证信息。
- * @date 2025年05月07日
+ *
+ * @author autumn
  */
 @Configuration
 @EnableWebSecurity

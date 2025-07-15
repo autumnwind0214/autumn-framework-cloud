@@ -38,8 +38,8 @@ public class MenuController {
 
     // 列表查询
     @GetMapping("/list")
-    public R<List<MenuVo>> list() {
-        return R.success(menuService.getList());
+    public List<MenuVo> list() {
+        return menuService.getList();
     }
 
     // 新增

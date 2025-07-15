@@ -1,10 +1,5 @@
 package com.autumn.auth.service.impl;
 
-
-import com.alicp.jetcache.Cache;
-import com.alicp.jetcache.CacheManager;
-import com.alicp.jetcache.anno.CacheType;
-import com.alicp.jetcache.template.QuickConfig;
 import com.autumn.auth.entity.AuthorizationUser;
 import com.autumn.auth.entity.Menu;
 import com.autumn.auth.enums.MenuTypesEnum;
@@ -45,22 +40,10 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
 
     private final UserRoleMapper userRoleMapper;
 
-    // private final RedisOperator<List<DynamicRouteVo>> redisOperator;
-    //
-    // private final CacheManager cacheManager;
-    //
-    // private Cache<String, List<DynamicRouteVo>> routeVoCache;
+    private final RedisOperator<List<DynamicRouteVo>> redisOperator;
 
     private final IAuthorizationUserService authorizationUserService;
 
-    // @PostConstruct
-    // public void init() {
-    //     QuickConfig qc = QuickConfig.newBuilder("routeVoCache")
-    //             .cacheType(CacheType.BOTH)
-    //             .syncLocal(true)
-    //             .build();
-    //     routeVoCache = cacheManager.getOrCreateCache(qc);
-    // }
 
 
     @Override
@@ -195,47 +178,4 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
         }
         return children;
     }
-
-    // /**
-    //  * 获取父级跟节点
-    //  *
-    //  */
-    // private List<Menu> getRootNodes(List<Menu> list) {
-    //     List<Menu> rootList = new ArrayList<>();
-    //     for (Menu menu : list) {
-    //         if (menu.getParentId() == null || menu.getParentId().equals(0L)) {
-    //             rootList.add(menu);
-    //         }
-    //     }
-    //     // 根节点排序
-    //     rootList.sort(Comparator.comparingInt(Menu::getOrder));
-    //     return rootList;
-    // }
-    //
-    // private RouteVo getChildrenNode(Menu rootNode, List<Menu> menuList) {
-    //     List<RouteVo> childrenList = new ArrayList<>();
-    //     for (Menu menu : menuList) {
-    //         if (menu.getParentId().equals(rootNode.getId()) && !MenuTypesEnum.BUTTON.getCode().equals(menu.getType())) {
-    //             childrenList.add(getChildrenNode(menu, menuList));
-    //         }
-    //     }
-    //     RouteVo vo = new RouteVo();
-    //     BeanCopyUtils.copy(rootNode, vo);
-    //     vo.setChildren(childrenList);
-    //     RouteVo.Meta meta = new RouteVo.Meta();
-    //     BeanCopyUtils.copy(rootNode, meta);
-    //     getMenuAuths(rootNode.getId(), meta,menuList);
-    //     vo.setMeta(meta);
-    //     return vo;
-    // }
-    //
-    // private void getMenuAuths(Long parentId, RouteVo.Meta meta, List<Menu> list) {
-    //     List<String> auths = new ArrayList<>();
-    //     for (Menu menu : list) {
-    //         if (parentId.equals(menu.getParentId()) && MenuTypesEnum.BUTTON.getCode().equals(menu.getType())) {
-    //             auths.add(menu.getAuthCode());
-    //         }
-    //     }
-    //     meta.setAuths(auths.toArray(new String[0]));
-    // }
 }

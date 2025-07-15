@@ -21,9 +21,9 @@ import org.springframework.web.filter.GenericFilterBean;
 import java.io.IOException;
 
 /**
+ * 验证码校验过滤器
+ *
  * @author autumn
- * @desc 验证码校验过滤器
- * @date 2025年05月13日
  */
 @Slf4j
 public class CaptchaAuthenticationFilter extends GenericFilterBean {

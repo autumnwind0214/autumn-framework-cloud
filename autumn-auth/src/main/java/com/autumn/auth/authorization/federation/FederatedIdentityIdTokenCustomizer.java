@@ -20,9 +20,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
+ * 生成的 OAuth2 令牌添加自定义的属性
+ *
  * @author autumn
- * @desc 生成的 OAuth2 令牌添加自定义的属性
- * @date 2025/5/12 22:03
  **/
 public class FederatedIdentityIdTokenCustomizer implements OAuth2TokenCustomizer<JwtEncodingContext> {
 

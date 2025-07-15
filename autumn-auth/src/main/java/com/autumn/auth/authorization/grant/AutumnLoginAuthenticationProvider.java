@@ -4,7 +4,6 @@ package com.autumn.auth.authorization.grant;
 import com.autumn.auth.authorization.captcha.CaptchaAuthenticationProvider;
 import com.autumn.auth.constant.SecurityConstants;
 import com.autumn.auth.exception.InvalidCaptchaException;
-import com.autumn.common.core.exception.AutumnException;
 import com.autumn.common.core.result.ResultCodeEnum;
 import com.autumn.common.redis.constant.RedisConstant;
 import com.autumn.common.redis.core.RedisOperator;
