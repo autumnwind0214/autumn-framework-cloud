@@ -26,12 +26,12 @@
     </select>
 
     <select id="queryPermissionByUserId" resultType="java.lang.String">
-        SELECT DISTINCT(menu.auths)
+        SELECT DISTINCT(menu.auth_code)
         FROM user_role
                  LEFT JOIN role_menu ON user_role.role_id = role_menu.role_id
                  LEFT JOIN menu ON role_menu.menu_id = menu.id
-        WHERE menu.auths IS NOT NULL
-          AND menu.auths != ''
+        WHERE menu.auth_code IS NOT NULL
+          AND menu.auth_code != ''
           AND user_role.user_id = #{userId};
     </select>
     <select id="queryUserRoleInfo" resultType="com.autumn.auth.model.vo.UserRoleVo">

@@ -6,6 +6,7 @@ import com.autumn.auth.model.vo.MenuVo;
 import com.autumn.auth.model.vo.DynamicRouteVo;
 import com.autumn.auth.service.IMenuService;
 import com.autumn.auth.utils.SecurityUtils;
+import com.autumn.common.core.base.AutumnTreeNode;
 import com.autumn.common.core.result.R;
 import com.autumn.auth.message.MessageProducer;
 import lombok.RequiredArgsConstructor;

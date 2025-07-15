@@ -1,13 +1,13 @@
 package com.autumn.auth.service.impl;
 
 
-
 import com.alicp.jetcache.Cache;
 import com.alicp.jetcache.CacheManager;
 import com.alicp.jetcache.anno.CacheType;
 import com.alicp.jetcache.template.QuickConfig;
 import com.autumn.auth.entity.AuthorizationUser;
 import com.autumn.auth.entity.Menu;
+import com.autumn.auth.enums.MenuTypesEnum;
 import com.autumn.auth.mapper.MenuMapper;
 import com.autumn.auth.mapper.UserRoleMapper;
 import com.autumn.auth.model.dto.MenuDto;
@@ -71,7 +71,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
         // if (!CollectionUtils.isEmpty(routeList)) {
         //     return routeList;
         // }
-        // routeList = getRouteList(userId);
+        routeList = getRouteList(userId);
         // routeVoCache.put(key, routeList);
         return routeList;
     }
@@ -141,30 +141,59 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
 
     /**
      * 获取路由表
+     *
      * @param userId 用户id
      * @return 路由表
      */
-    private List<AutumnTreeNode<DynamicRouteVo>> getRouteList(Long userId) {
-        List<AutumnTreeNode<DynamicRouteVo>> treeList = new ArrayList<>();
+    private List<DynamicRouteVo> getRouteList(Long userId) {
+        List<DynamicRouteVo> routeList = new ArrayList<>();
         // 查询用户具有的menu_id
         List<Long> menuIds = userRoleMapper.queryMenuIdByUserId(userId);
         if (!CollectionUtils.isEmpty(menuIds)) {
             // 菜单全部数据(当前用户下的)
             LambdaQueryWrapper<Menu> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.ne(Menu::getType, MenuTypesEnum.BUTTON.getCode());
             queryWrapper.in(Menu::getId, menuIds).orderByAsc(Menu::getSort);
             List<Menu> list = menuMapper.selectList(queryWrapper);
-            List<DynamicRouteVo> routeVoList = MapstructUtils.convert(list, DynamicRouteVo.class);
+            List<DynamicRouteVo> routeVoList = list.stream().map(menu -> {
+                        DynamicRouteVo vo = new DynamicRouteVo();
+                        MapstructUtils.convert(menu, vo);
+                        DynamicRouteVo.Meta meta = new DynamicRouteVo.Meta();
+                        MapstructUtils.convert(menu, meta);
+                        vo.setMeta(meta);
+                        return vo;
+                    }
+            ).toList();
             TreeBuilderUtils<DynamicRouteVo, Long> treeBuilder = new TreeBuilderUtils<>();
             // 构建树
-            treeList = treeBuilder.buildTree(
+            List<AutumnTreeNode<DynamicRouteVo>> treeList = treeBuilder.buildTree(
                     routeVoList,
                     DynamicRouteVo::getId,
                     DynamicRouteVo::getParentId,
                     0L
             );
+            // 将 AutumnTreeNode 包裹的 data 直接作为对象，并将 children 放到该对象的 children 属性中
+            for (AutumnTreeNode<DynamicRouteVo> node : treeList) {
+                DynamicRouteVo vo = node.getData();
+                vo.setChildren(extractChildren(node.getChildren()));
+                routeList.add(vo);
+            }
         }
 
-        return treeList;
+        return routeList;
+    }
+
+    // 递归提取子节点数据
+    private List<DynamicRouteVo> extractChildren(List<AutumnTreeNode<DynamicRouteVo>> nodes) {
+        List<DynamicRouteVo> children = new ArrayList<>();
+        if (nodes != null && !nodes.isEmpty()) {
+            for (AutumnTreeNode<DynamicRouteVo> node : nodes) {
+                DynamicRouteVo vo = node.getData();
+                vo.setChildren(extractChildren(node.getChildren()));
+                children.add(vo);
+            }
+        }
+        return children;
     }
 
     // /**

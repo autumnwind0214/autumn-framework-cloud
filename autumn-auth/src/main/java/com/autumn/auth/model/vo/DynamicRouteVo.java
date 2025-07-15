@@ -1,5 +1,7 @@
 package com.autumn.auth.model.vo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 import java.io.Serial;
@@ -11,6 +13,7 @@ import java.util.List;
  *
  * @author autumn
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
 public class DynamicRouteVo implements Serializable {
 
@@ -38,8 +41,10 @@ public class DynamicRouteVo implements Serializable {
     // 元数据
     private Meta meta;
 
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private List<DynamicRouteVo> children;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @Data
     public static class Meta implements Serializable {
 
