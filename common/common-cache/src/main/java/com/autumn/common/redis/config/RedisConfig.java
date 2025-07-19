@@ -1,5 +1,9 @@
 package com.autumn.common.redis.config;
 
+// import com.fasterxml.jackson.annotation.JsonAutoDetect;
+// import com.fasterxml.jackson.annotation.JsonTypeInfo;
+// import com.fasterxml.jackson.annotation.PropertyAccessor;
+// import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
@@ -14,9 +18,9 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 /**
+ * redis配置
+ *
  * @author autumn
- * @desc redis配置
- * @date 2025年05月12日
  */
 @Configuration
 @RequiredArgsConstructor

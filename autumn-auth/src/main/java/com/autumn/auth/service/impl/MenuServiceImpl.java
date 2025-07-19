@@ -45,34 +45,33 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
 
     private final UserRoleMapper userRoleMapper;
 
-    // private final RedisOperator<List<DynamicRouteVo>> redisOperator;
-    //
-    // private final CacheManager cacheManager;
-    //
-    // private Cache<String, List<DynamicRouteVo>> routeVoCache;
+    private final RedisOperator<List<DynamicRouteVo>> redisOperator;
+
+    private final CacheManager cacheManager;
+
+    private Cache<String, List<DynamicRouteVo>> routeVoCache;
 
     private final IAuthorizationUserService authorizationUserService;
 
-    // @PostConstruct
-    // public void init() {
-    //     QuickConfig qc = QuickConfig.newBuilder("routeVoCache")
-    //             .cacheType(CacheType.BOTH)
-    //             .syncLocal(true)
-    //             .build();
-    //     routeVoCache = cacheManager.getOrCreateCache(qc);
-    // }
+    @PostConstruct
+    public void init() {
+        QuickConfig qc = QuickConfig.newBuilder("routeVoCache")
+                .cacheType(CacheType.BOTH)
+                .syncLocal(true)
+                .build();
+        routeVoCache = cacheManager.getOrCreateCache(qc);
+    }
 
 
     @Override
     public List<DynamicRouteVo> getAsyncRoutes(Long userId) {
         String key = RedisConstant.ASYNC_ROUTES_PREFIX_KEY + userId;
-        // List<RouteVo> routeList = routeVoCache.get(key);
-        List<DynamicRouteVo> routeList = new ArrayList<>();
-        // if (!CollectionUtils.isEmpty(routeList)) {
-        //     return routeList;
-        // }
+        List<DynamicRouteVo> routeList = routeVoCache.get(key);
+        if (!CollectionUtils.isEmpty(routeList)) {
+            return routeList;
+        }
         routeList = getRouteList(userId);
-        // routeVoCache.put(key, routeList);
+        routeVoCache.put(key, routeList);
         return routeList;
     }
 

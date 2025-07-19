@@ -1,9 +1,9 @@
 package com.autumn.common.redis.constant;
 
 /**
+ * redis常量
+ *
  * @author autumn
- * @desc redis常量
- * @date 2024年11月14日
  */
 public class RedisConstant {
 

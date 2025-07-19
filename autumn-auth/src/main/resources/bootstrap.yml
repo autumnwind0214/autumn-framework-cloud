@@ -33,8 +33,8 @@ spring:
             group: ${spring.profiles.active}
           - data-id: common-rabbitmq.yml
             group: ${spring.profiles.active}
-#          - data-id: common-redis.yml
-#            group: ${spring.profiles.active}
+          - data-id: common-cache.yml
+            group: ${spring.profiles.active}
 logging:
   level:
     org.springframework.security: debug
