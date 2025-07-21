@@ -2,6 +2,7 @@ package com.autumn.auth.entity;
 
 import com.autumn.auth.model.dto.MenuDto;
 import com.autumn.auth.model.vo.DynamicRouteVo;
+import com.autumn.auth.model.vo.MenuVo;
 import com.autumn.auth.model.vo.RoleMenuVo;
 import com.autumn.mybatis.core.model.BaseEntity;
 import com.autumn.mybatis.handler.BooleanTypeHandler;
@@ -20,7 +21,9 @@ import lombok.EqualsAndHashCode;
         @AutoMapper(target = MenuDto.class),
         @AutoMapper(target = RoleMenuVo.class),
         @AutoMapper(target = DynamicRouteVo.class),
-        @AutoMapper(target = DynamicRouteVo.Meta.class)
+        @AutoMapper(target = DynamicRouteVo.Meta.class),
+        @AutoMapper(target = MenuVo.class),
+        @AutoMapper(target = MenuVo.Meta.class)
 })
 @EqualsAndHashCode(callSuper = true)
 @Data

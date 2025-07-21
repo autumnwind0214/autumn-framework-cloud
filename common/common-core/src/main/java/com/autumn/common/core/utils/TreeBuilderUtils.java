@@ -5,6 +5,7 @@ import com.autumn.common.core.base.AutumnTreeNode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -60,5 +61,40 @@ public class TreeBuilderUtils<T, ID> {
         }
 
         return tree;
+    }
+
+    /**
+     * 将树形结构映射回数据对象，并填充子节点
+     * @param node 当前节点
+     * @param childSetter 用于设置子节点的函数
+     * @return 数据对象 T
+     */
+    private T mapToDataObject(AutumnTreeNode<T> node, BiConsumer<T, List<T>> childSetter) {
+        T data = node.getData();
+        List<T> childList = node.getChildren().stream()
+                .map(childNode -> mapToDataObject(childNode, childSetter))
+                .toList();
+        childSetter.accept(data, childList);
+        return data;
+    }
+
+    /**
+     * 构建树形结构并映射回数据对象
+     * @param dataList 扁平化数据列表
+     * @param idGetter 获取节点ID的函数
+     * @param parentIdGetter 获取父节点ID的函数
+     * @param rootId 根节点的父ID
+     * @param childSetter 用于设置子节点的函数
+     * @return 数据对象列表，每个对象内部包含子节点
+     */
+    public List<T> buildAndMapToData(List<T> dataList,
+                                      Function<T, ID> idGetter,
+                                      Function<T, ID> parentIdGetter,
+                                      ID rootId,
+                                      BiConsumer<T, List<T>> childSetter) {
+        List<AutumnTreeNode<T>> tree = buildTree(dataList, idGetter, parentIdGetter, rootId);
+        return tree.stream()
+                .map(node -> mapToDataObject(node, childSetter))
+                .toList();
     }
 }

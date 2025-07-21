@@ -79,8 +79,18 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
     public List<MenuVo> getList() {
         LambdaQueryWrapper<Menu> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.orderByAsc(Menu::getSort);
+        List<Menu> menus = menuMapper.selectList(queryWrapper);
+        List<MenuVo> list = menus.stream().map(menu -> {
+            MenuVo vo = new MenuVo();
+            MapstructUtils.convert(menu, vo);
+            MenuVo.Meta meta = new MenuVo.Meta();
+            MapstructUtils.convert(menu, meta);
+            vo.setMeta(meta);
+            return vo;
+        }).toList();
+        TreeBuilderUtils<MenuVo, Long> treeBuilder = new TreeBuilderUtils<>();
         // 菜单全部数据
-        return menuMapper.selectVoList(queryWrapper);
+        return treeBuilder.buildAndMapToData(list, MenuVo::getId, MenuVo::getParentId, 0L, MenuVo::setChildren);
     }
 
     @Override
@@ -131,10 +141,10 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
         wrapper.select(AuthorizationUser::getId);
         authorizationUserService.list(wrapper).forEach(user -> {
             String key = RedisConstant.ASYNC_ROUTES_PREFIX_KEY + user.getId();
-            // if(!CollectionUtils.isEmpty(routeVoCache.get(key))) {
-            //     List<RouteVo> list = getRouteList(user.getId());
-            //     routeVoCache.put(key, list);
-            // }
+            if(!CollectionUtils.isEmpty(routeVoCache.get(key))) {
+                List<DynamicRouteVo> list = getRouteList(user.getId());
+                routeVoCache.put(key, list);
+            }
         });
     }
 
