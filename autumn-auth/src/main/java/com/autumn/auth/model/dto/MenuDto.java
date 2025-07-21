@@ -5,8 +5,6 @@ import lombok.Data;
 
 /**
  * @author autumn
- * @desc 菜单Dto
- * @date 2025年04月17日
  */
 @Data
 public class MenuDto {

@@ -1,6 +1,7 @@
 package com.autumn.auth.controller;
 
 import com.autumn.auth.config.RabbitMqConfig;
+import com.autumn.auth.model.dto.MenuCheckDto;
 import com.autumn.auth.model.dto.MenuDto;
 import com.autumn.auth.model.vo.MenuVo;
 import com.autumn.auth.model.vo.DynamicRouteVo;
@@ -69,10 +70,17 @@ public class MenuController {
     // 删除
     @PreAuthorize("hasAuthority('system:menu:delete')")
     @DeleteMapping("/{id}")
-    public R<Boolean> delete(@PathVariable Long id) {
-        menuService.delete(id);
+    public Boolean delete(@PathVariable Long id) {
         messageProducer.sendMessage("菜单路由删除", RabbitMqConfig.MENU_EXCHANGE, RabbitMqConfig.MENU_KEY);
-        return R.success(true);
+        return menuService.delete(id);
+    }
+
+    /**
+     * 规则校验
+     */
+    @PostMapping("/check")
+    public Boolean check(@RequestBody MenuCheckDto dto) {
+        return menuService.checkParamsUnique(dto);
     }
 
 }

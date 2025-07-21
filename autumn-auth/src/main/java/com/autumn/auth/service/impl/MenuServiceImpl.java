@@ -10,6 +10,7 @@ import com.autumn.auth.entity.Menu;
 import com.autumn.auth.enums.MenuTypesEnum;
 import com.autumn.auth.mapper.MenuMapper;
 import com.autumn.auth.mapper.UserRoleMapper;
+import com.autumn.auth.model.dto.MenuCheckDto;
 import com.autumn.auth.model.dto.MenuDto;
 import com.autumn.auth.model.vo.MenuVo;
 import com.autumn.auth.model.vo.RoleMenuVo;
@@ -141,11 +142,51 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
         wrapper.select(AuthorizationUser::getId);
         authorizationUserService.list(wrapper).forEach(user -> {
             String key = RedisConstant.ASYNC_ROUTES_PREFIX_KEY + user.getId();
-            if(!CollectionUtils.isEmpty(routeVoCache.get(key))) {
+            if (!CollectionUtils.isEmpty(routeVoCache.get(key))) {
                 List<DynamicRouteVo> list = getRouteList(user.getId());
                 routeVoCache.put(key, list);
             }
         });
+    }
+
+    /**
+     * 检查参数是否唯一
+     *
+     * @param dto 参数
+     * @return true:唯一
+     */
+    @Override
+    public Boolean checkParamsUnique(MenuCheckDto dto) {
+        // 检查组件路径是否唯一
+        if (checkNameUnique(dto.getName())) {
+            return false;
+        }
+        // 检查菜单名称是否唯一
+        return !checkComponentUnique(dto.getComponent());
+    }
+
+    /**
+     * 检查组件路径是否唯一
+     *
+     * @param component 组件路径
+     * @return true:唯一
+     */
+    private boolean checkComponentUnique(String component) {
+        LambdaQueryWrapper<Menu> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Menu::getComponent, component);
+        return this.count(wrapper) <= 0;
+    }
+
+    /**
+     * 检查菜单名称是否唯一
+     *
+     * @param name 菜单名称
+     * @return true:唯一
+     */
+    private boolean checkNameUnique(String name) {
+        LambdaQueryWrapper<Menu> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Menu::getName, name);
+        return this.count(wrapper) <= 0;
     }
 
     /**
@@ -174,34 +215,12 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
                     }
             ).toList();
             TreeBuilderUtils<DynamicRouteVo, Long> treeBuilder = new TreeBuilderUtils<>();
-            // 构建树
-            List<AutumnTreeNode<DynamicRouteVo>> treeList = treeBuilder.buildTree(
-                    routeVoList,
-                    DynamicRouteVo::getId,
-                    DynamicRouteVo::getParentId,
-                    0L
-            );
-            // 将 AutumnTreeNode 包裹的 data 直接作为对象，并将 children 放到该对象的 children 属性中
-            for (AutumnTreeNode<DynamicRouteVo> node : treeList) {
-                DynamicRouteVo vo = node.getData();
-                vo.setChildren(extractChildren(node.getChildren()));
-                routeList.add(vo);
-            }
+            routeList = treeBuilder.buildAndMapToData(
+                    routeVoList, DynamicRouteVo::getId, DynamicRouteVo::getParentId, 0L, DynamicRouteVo::setChildren);
+
+
         }
 
         return routeList;
-    }
-
-    // 递归提取子节点数据
-    private List<DynamicRouteVo> extractChildren(List<AutumnTreeNode<DynamicRouteVo>> nodes) {
-        List<DynamicRouteVo> children = new ArrayList<>();
-        if (nodes != null && !nodes.isEmpty()) {
-            for (AutumnTreeNode<DynamicRouteVo> node : nodes) {
-                DynamicRouteVo vo = node.getData();
-                vo.setChildren(extractChildren(node.getChildren()));
-                children.add(vo);
-            }
-        }
-        return children;
     }
 }

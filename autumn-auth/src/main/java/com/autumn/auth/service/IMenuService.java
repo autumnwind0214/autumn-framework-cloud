@@ -2,6 +2,7 @@ package com.autumn.auth.service;
 
 
 import com.autumn.auth.entity.Menu;
+import com.autumn.auth.model.dto.MenuCheckDto;
 import com.autumn.auth.model.dto.MenuDto;
 import com.autumn.auth.model.vo.MenuVo;
 import com.autumn.auth.model.vo.RoleMenuVo;
@@ -31,4 +32,6 @@ public interface IMenuService extends IService<Menu> {
     Boolean delete(Long id);
 
     void updateRoutesCache();
+
+    Boolean checkParamsUnique(MenuCheckDto dto);
 }
