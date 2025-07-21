@@ -1,5 +1,10 @@
 package com.autumn.auth.service.impl;
 
+
+import com.alicp.jetcache.Cache;
+import com.alicp.jetcache.CacheManager;
+import com.alicp.jetcache.anno.CacheType;
+import com.alicp.jetcache.template.QuickConfig;
 import com.autumn.auth.entity.AuthorizationUser;
 import com.autumn.auth.entity.Menu;
 import com.autumn.auth.enums.MenuTypesEnum;
@@ -42,20 +47,31 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
 
     private final RedisOperator<List<DynamicRouteVo>> redisOperator;
 
+    private final CacheManager cacheManager;
+
+    private Cache<String, List<DynamicRouteVo>> routeVoCache;
+
     private final IAuthorizationUserService authorizationUserService;
 
+    @PostConstruct
+    public void init() {
+        QuickConfig qc = QuickConfig.newBuilder("routeVoCache")
+                .cacheType(CacheType.BOTH)
+                .syncLocal(true)
+                .build();
+        routeVoCache = cacheManager.getOrCreateCache(qc);
+    }
 
 
     @Override
     public List<DynamicRouteVo> getAsyncRoutes(Long userId) {
         String key = RedisConstant.ASYNC_ROUTES_PREFIX_KEY + userId;
-        // List<RouteVo> routeList = routeVoCache.get(key);
-        List<DynamicRouteVo> routeList = new ArrayList<>();
-        // if (!CollectionUtils.isEmpty(routeList)) {
-        //     return routeList;
-        // }
+        List<DynamicRouteVo> routeList = routeVoCache.get(key);
+        if (!CollectionUtils.isEmpty(routeList)) {
+            return routeList;
+        }
         routeList = getRouteList(userId);
-        // routeVoCache.put(key, routeList);
+        routeVoCache.put(key, routeList);
         return routeList;
     }
 

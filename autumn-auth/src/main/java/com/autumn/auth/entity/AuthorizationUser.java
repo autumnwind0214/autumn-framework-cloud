@@ -14,9 +14,9 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 /**
+ * 基本用户
+ *
  * @author autumn
- * @desc 基本用户
- * @date 2025年05月12日
  */
 @Getter
 @Setter

@@ -33,7 +33,7 @@ spring:
             group: ${spring.profiles.active}
           - data-id: common-rabbitmq.yml
             group: ${spring.profiles.active}
-          - data-id: common-redis.yml
+          - data-id: common-cache.yml
             group: ${spring.profiles.active}
 logging:
   level:
