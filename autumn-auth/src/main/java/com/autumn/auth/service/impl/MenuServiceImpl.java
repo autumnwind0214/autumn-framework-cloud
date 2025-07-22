@@ -1,6 +1,7 @@
 package com.autumn.auth.service.impl;
 
 
+import cn.hutool.core.lang.Assert;
 import com.alicp.jetcache.Cache;
 import com.alicp.jetcache.CacheManager;
 import com.alicp.jetcache.anno.CacheType;
@@ -10,14 +11,12 @@ import com.autumn.auth.entity.Menu;
 import com.autumn.auth.enums.MenuTypesEnum;
 import com.autumn.auth.mapper.MenuMapper;
 import com.autumn.auth.mapper.UserRoleMapper;
-import com.autumn.auth.model.dto.MenuCheckDto;
 import com.autumn.auth.model.dto.MenuDto;
 import com.autumn.auth.model.vo.MenuVo;
 import com.autumn.auth.model.vo.RoleMenuVo;
 import com.autumn.auth.model.vo.DynamicRouteVo;
 import com.autumn.auth.service.IAuthorizationUserService;
 import com.autumn.auth.service.IMenuService;
-import com.autumn.common.core.base.AutumnTreeNode;
 import com.autumn.common.core.utils.BeanCopyUtils;
 import com.autumn.common.core.utils.MapstructUtils;
 import com.autumn.common.core.utils.TreeBuilderUtils;
@@ -118,18 +117,21 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
 
     @Override
     public Boolean addMenu(MenuDto dto) {
-        LambdaQueryWrapper<Menu> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Menu::getName, dto.getName());
-        if (this.count(wrapper) > 0) {
-            return false;
-        }
-        Menu menu = BeanCopyUtils.copy(dto, new Menu());
+        Assert.isTrue(checkPathUnique(null, dto.getPath()));
+        Assert.isTrue(checkNameUnique(null, dto.getName()));
+        Menu menu = new Menu();
+        MapstructUtils.convert(dto, menu);
+        MapstructUtils.convert(dto.getMeta(), menu);
         return this.save(menu);
     }
 
     @Override
     public Boolean updateMenu(MenuDto dto) {
-        Menu menu = BeanCopyUtils.copy(dto, new Menu());
+        Assert.isTrue(checkPathUnique(dto.getId(), dto.getPath()));
+        Assert.isTrue(checkNameUnique(dto.getId(), dto.getName()));
+        Menu menu = new Menu();
+        MapstructUtils.convert(dto, menu);
+        MapstructUtils.convert(dto.getMeta(), menu);
         return this.updateById(menu);
     }
 
@@ -149,31 +151,18 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
         });
     }
 
-    /**
-     * 检查参数是否唯一
-     *
-     * @param dto 参数
-     * @return true:唯一
-     */
-    @Override
-    public Boolean checkParamsUnique(MenuCheckDto dto) {
-        // 检查组件路径是否唯一
-        if (checkNameUnique(dto.getName())) {
-            return false;
-        }
-        // 检查菜单名称是否唯一
-        return !checkComponentUnique(dto.getComponent());
-    }
 
     /**
      * 检查组件路径是否唯一
      *
-     * @param component 组件路径
+     * @param path 组件路径
      * @return true:唯一
      */
-    private boolean checkComponentUnique(String component) {
+    @Override
+    public boolean checkPathUnique(Long menuId, String path) {
         LambdaQueryWrapper<Menu> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Menu::getComponent, component);
+        wrapper.eq(Menu::getPath, path);
+        wrapper.ne(menuId != null, Menu::getId, menuId);
         return this.count(wrapper) <= 0;
     }
 
@@ -183,9 +172,11 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
      * @param name 菜单名称
      * @return true:唯一
      */
-    private boolean checkNameUnique(String name) {
+    @Override
+    public boolean checkNameUnique(Long menuId, String name) {
         LambdaQueryWrapper<Menu> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Menu::getName, name);
+        wrapper.ne(menuId != null, Menu::getId, menuId);
         return this.count(wrapper) <= 0;
     }
 

@@ -1,5 +1,9 @@
 package com.autumn.auth.model.dto;
 
+import com.autumn.auth.entity.Menu;
+import com.autumn.mybatis.handler.BooleanTypeHandler;
+import com.baomidou.mybatisplus.annotation.TableField;
+import io.github.linpeilie.annotations.AutoMapper;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
@@ -7,94 +11,157 @@ import lombok.Data;
  * @author autumn
  */
 @Data
+@AutoMapper(target = Menu.class)
 public class MenuDto {
 
     Long id;
 
+    /**
+     * 父级id
+     */
     Long parentId;
+
     /**
-     * 菜单类型（`0`代表菜单、`1`代表`iframe`、`2`代表外链、`3`代表按钮）
+     * 路由名称
      */
-    @NotBlank(message = "菜单类型不能为空")
-    Integer menuType;
-    /**
-     * 菜单名称（兼容国际化、非国际化，如果用国际化的写法就必须在根目录的`locales`文件夹下对应添加）
-     */
-    @NotBlank(message = "菜单名称不能为空")
-    String title;
-    /**
-     * 路由名称（必须唯一并且和当前路由`component`字段对应的页面里用`defineOptions`包起来的`name`保持一致）
-     */
-    @NotBlank(message = "路由名称不能为空")
     String name;
+
+    /**
+     * 状态
+     */
+    Integer status;
+
+    /**
+     * 类型
+     */
+    String type;
+
     /**
      * 路由路径
      */
     String path;
+
     /**
-     * 组件路径（传`component`组件路径，那么`path`可以随便写，如果不传，`component`组件路径会跟`path`保持一致）
-     */
-    String component;
-    /**
-     * 菜单排序
-     */
-    Integer sort;
-    /**
-     * 路由重定向
-     */
-    String redirect;
-    /**
-     * 菜单图标
-     */
-    String icon;
-    /**
-     * 右侧图标
-     */
-    String extraIcon;
-    /**
-     * 进场动画（页面加载动画）
-     */
-    String enterTransition;
-    /**
-     * 离场动画（页面加载动画）
-     */
-    String leaveTransition;
-    /**
-     * 菜单激活（将某个菜单激活，主要用于通过`query`或`params`传参的路由，
-     * 当它们通过配置`showLink: false`后不在菜单中显示，就不会有任何菜单高亮，
-     * 而通过设置`activePath`指定激活菜单即可获得高亮，`activePath`为指定激活菜单的`path`）
+     * activePath
+     * 类型：string
+     * 默认值：''
+     * 用于配置当前激活的菜单，有时候页面没有显示在菜单内，需要激活父级菜单时使用。
      */
     String activePath;
+
     /**
-     * 权限标识（按钮级别权限设置）
+     * 组件路径
      */
-    String auths;
+    String component;
+
     /**
-     * 链接地址（需要内嵌的`iframe`链接地址）
+     * 权限码
      */
-    String frameSrc;
+    String authCode;
+
     /**
-     * 加载动画（内嵌的`iframe`页面是否开启首次加载动画）
+     * iframeSrc
+     * 类型：string
+     * 默认值：''
+     * 用于配置内嵌页面的 iframe 地址，设置后会在当前页面内嵌对应的页面。
      */
-    Boolean frameLoading;
+    String iframeSrc;
+
     /**
-     * 缓存页面（是否缓存该路由页面，开启后会保存该页面的整体状态，刷新后会清空状态）
+     * link
+     * 类型：string
+     * 默认值：''
+     * 用于配置外链跳转路径，会在新窗口打开。
      */
-    Boolean keepAlive;
+    String link;
+
     /**
-     * 标签页（当前菜单名称或自定义信息禁止添加到标签页）
+     * sort
+     * 类型：number
+     * 默认值：0
+     * 用于配置页面的排序，用于路由到菜单排序。
+     * 注意: 排序仅针对一级菜单有效，二级菜单的排序需要在对应的一级菜单中按代码顺序设置。
      */
-    Boolean hiddenTag;
-    /**
-     * 固定标签页（当前菜单名称是否固定显示在标签页且不可关闭）
-     */
-    Boolean fixedTag;
-    /**
-     * 菜单（是否显示该菜单）
-     */
-    Boolean showLink;
-    /**
-     * 父级菜单（是否显示父级菜单）
-     */
-    Boolean showParent;
+    Integer sort;
+
+    Meta meta;
+
+    @Data
+    @AutoMapper(target = Menu.class)
+    public static class Meta {
+        /**
+         * 菜单标题
+         */
+        String title;
+
+
+        /**
+         * 图标
+         */
+        String icon;
+
+        /**
+         * 激活图标
+         */
+        String activeIcon;
+
+        /**
+         * 用于配置页面的徽标类型，dot 为小红点，normal 为文本。
+         * 类型：'dot' | 'normal'
+         * default：'normal'
+         */
+        String badgeType;
+
+        /**
+         * 用于配置页面的徽标，会在菜单显示。
+         * default：''
+         */
+        String badge;
+
+        /**
+         * 用于配置页面的徽标颜色。
+         * 类型：'default' | 'destructive' | 'primary' | 'success' | 'warning' | string
+         * default：success
+         */
+        String badgeVariants;
+
+        /**
+         * 用于配置页面是否开启缓存，开启后页面会缓存，不会重新加载，仅在标签页启用时有效。
+         * default: false
+         */
+        Boolean keepAlive;
+
+        /**
+         * affixTab
+         * 类型：boolean
+         * 默认值：false
+         * 用于配置页面是否固定标签页，固定后页面不可关闭。
+         */
+        Boolean affixTab;
+
+        /**
+         * 用于配置页面是否在菜单中隐藏，隐藏后页面不会在菜单中显示。
+         * default: false
+         */
+        Boolean hideInMenu;
+
+        /**
+         * 用于配置页面的子页面是否在菜单中隐藏，隐藏后子页面不会在菜单中显示。
+         * default: false
+         */
+        Boolean hideChildrenInMenu;
+
+        /**
+         * 用于配置页面是否在面包屑中隐藏，隐藏后页面不会在面包屑中显示。
+         * default: false
+         */
+        Boolean hideInBreadcrumb;
+
+        /**
+         * 用于配置页面是否在标签页中隐藏，隐藏后页面不会在标签页中显示。
+         * default: false
+         */
+        Boolean hideInTab;
+
+    }
 }

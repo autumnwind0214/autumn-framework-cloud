@@ -33,5 +33,7 @@ public interface IMenuService extends IService<Menu> {
 
     void updateRoutesCache();
 
-    Boolean checkParamsUnique(MenuCheckDto dto);
+    boolean checkPathUnique(Long menuId, String path);
+
+    boolean checkNameUnique(Long menuId, String name);
 }

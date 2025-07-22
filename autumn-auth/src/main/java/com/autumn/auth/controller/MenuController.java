@@ -7,7 +7,6 @@ import com.autumn.auth.model.vo.MenuVo;
 import com.autumn.auth.model.vo.DynamicRouteVo;
 import com.autumn.auth.service.IMenuService;
 import com.autumn.auth.utils.SecurityUtils;
-import com.autumn.common.core.base.AutumnTreeNode;
 import com.autumn.common.core.result.R;
 import com.autumn.auth.message.MessageProducer;
 import lombok.RequiredArgsConstructor;
@@ -38,13 +37,14 @@ public class MenuController {
     }
 
     // 列表查询
+    @PreAuthorize("hasRole('admin') || hasAuthority('System:Menu:List')")
     @GetMapping("/list")
     public List<MenuVo> list() {
         return menuService.getList();
     }
 
     // 新增
-    @PreAuthorize("hasAuthority('system:menu:add')")
+    @PreAuthorize("hasRole('admin') || hasAuthority('System:Menu:Create')")
     @PostMapping
     public R<Boolean> add(@RequestBody MenuDto dto) {
         Boolean result = menuService.addMenu(dto);
@@ -53,7 +53,7 @@ public class MenuController {
     }
 
     // 编辑
-    @PreAuthorize("hasRole('admin') || hasAuthority('system:menu:edit')")
+    @PreAuthorize("hasRole('admin') || hasAuthority('System:Menu:Edit')")
     @PutMapping
     public R<Boolean> edit(@RequestBody MenuDto dto) {
         Boolean result = menuService.updateMenu(dto);
@@ -68,19 +68,21 @@ public class MenuController {
     }
 
     // 删除
-    @PreAuthorize("hasAuthority('system:menu:delete')")
+    @PreAuthorize("hasRole('admin') || hasAuthority('System:Menu:Delete')")
     @DeleteMapping("/{id}")
     public Boolean delete(@PathVariable Long id) {
         messageProducer.sendMessage("菜单路由删除", RabbitMqConfig.MENU_EXCHANGE, RabbitMqConfig.MENU_KEY);
         return menuService.delete(id);
     }
 
-    /**
-     * 规则校验
-     */
-    @PostMapping("/check")
-    public Boolean check(@RequestBody MenuCheckDto dto) {
-        return menuService.checkParamsUnique(dto);
+    @GetMapping("/nameExists")
+    public Boolean nameExists(@RequestParam(required = false) Long menuId, @RequestParam String name) {
+        return menuService.checkNameUnique(menuId, name);
+    }
+
+    @GetMapping("/pathExists")
+    public Boolean pathExists(@RequestParam(required = false) Long menuId, @RequestParam String path) {
+        return menuService.checkPathUnique(menuId, path);
     }
 
 }
