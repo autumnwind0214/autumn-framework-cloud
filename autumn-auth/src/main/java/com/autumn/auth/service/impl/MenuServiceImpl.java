@@ -29,6 +29,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -160,6 +161,9 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
      */
     @Override
     public boolean checkPathUnique(Long menuId, String path) {
+        if (!StringUtils.hasText(path)) {
+            return true;
+        }
         LambdaQueryWrapper<Menu> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Menu::getPath, path);
         wrapper.ne(menuId != null, Menu::getId, menuId);
@@ -174,6 +178,9 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
      */
     @Override
     public boolean checkNameUnique(Long menuId, String name) {
+        if (!StringUtils.hasText(name)) {
+            return true;
+        }
         LambdaQueryWrapper<Menu> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Menu::getName, name);
         wrapper.ne(menuId != null, Menu::getId, menuId);
