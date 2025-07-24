@@ -25,8 +25,6 @@ import java.util.List;
 
 /**
  * @author autumn
- * @desc 角色管理控制器
- * @date 2025年05月02日
  */
 @Slf4j
 @RestController
@@ -41,35 +39,35 @@ public class RoleController {
 
 
     @PostMapping("/listPage")
-    public R<Page<RoleVo>> listPage(@RequestBody RoleDto dto) {
-        return R.success(roleService.listPage(dto));
+    public Page<RoleVo> listPage(@RequestBody RoleDto dto) {
+        return roleService.listPage(dto);
     }
 
     @GetMapping("/roleMenuId/{roleId}")
-    public R<List<Long>> getRoleMenuId(@PathVariable Long roleId) {
-        return R.success(roleService.getRoleMenuId(roleId));
+    public List<Long> getRoleMenuId(@PathVariable Long roleId) {
+        return roleService.getRoleMenuId(roleId);
     }
 
     @GetMapping("/roleMenus")
-    public R<List<RoleMenuVo>> getRoleMenus() {
-        return R.success(menuService.getRoleMenus());
+    public List<RoleMenuVo> getRoleMenus() {
+        return menuService.getRoleMenus();
     }
 
     @GetMapping("/listAll")
-    public R<List<RoleVo>> getListAll() {
-        return R.success(roleService.getListAll());
+    public List<RoleVo> getListAll() {
+        return roleService.getListAll();
     }
 
     @PreAuthorize("hasAuthority('system:role:add')")
     @PostMapping
-    public R<Boolean> add(@Validated(InsertGroup.class) @RequestBody RoleDto dto) {
-        return R.success(roleService.add(dto));
+    public Boolean add(@Validated(InsertGroup.class) @RequestBody RoleDto dto) {
+        return roleService.add(dto);
     }
 
     @PreAuthorize("hasAuthority('system:role:edit')")
     @PutMapping
     public R<Boolean> edit(@Validated(UpdateGroup.class) @RequestBody RoleDto dto) {
-        if (Long.valueOf(1L).equals(dto.getId())) {
+        if (Long.valueOf(1L).equals(dto.getId()) && Integer.valueOf(0).equals(dto.getStatus())) {
             return R.fail("禁止修改超级管理员");
         }
         return R.success(roleService.edit(dto));
@@ -86,15 +84,6 @@ public class RoleController {
             return R.fail("禁止删除超级管理员");
         }
         return R.success(roleService.delete(ids));
-    }
-
-    @PreAuthorize("hasAuthority('system:role:isLock')")
-    @PutMapping("/isLock/{roleId}/{isLock}")
-    public R<Boolean> putIsLock(@NotNull @PathVariable Long roleId, @NotNull @PathVariable Integer isLock) {
-        if (Long.valueOf(1L).equals(roleId)) {
-            return R.fail("禁止锁定超级管理员");
-        }
-        return R.success(roleService.putIsLock(roleId, isLock));
     }
 
     @PreAuthorize("hasAuthority('system:role:auth')")

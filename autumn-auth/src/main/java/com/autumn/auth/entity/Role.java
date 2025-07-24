@@ -12,9 +12,9 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
+ * 角色表
+ *
  * @author autumn
- * @desc 角色表
- * @date 2025年05月02日
  */
 @AutoMappers({
         @AutoMapper(target = RoleDto.class),
@@ -32,7 +32,7 @@ public class Role implements Serializable {
 
     String roleName;
 
-    Integer isLock;
+    Integer status;
 
     String permission;
 

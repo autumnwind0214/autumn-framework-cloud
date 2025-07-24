@@ -3,9 +3,9 @@ package com.autumn.mybatis.core.model;
 import lombok.Data;
 
 /**
+ * 分页查询基础类
+ *
  * @author autumn
- * @desc 分页查询基础类
- * @date 2025年05月13日
  */
 @Data
 public class PageQuery {

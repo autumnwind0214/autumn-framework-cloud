@@ -12,15 +12,11 @@ import java.util.List;
 
 /**
  * @author autumn
- * @desc IRoleService
- * @date 2025年05月02日
  */
 public interface IRoleService extends IService<Role> {
     Page<RoleVo> listPage(RoleDto form);
 
     List<Long> getRoleMenuId(Long roleId);
-
-    Boolean putIsLock(Long roleId, Integer isLock);
 
     Boolean delete(Long[] roleId);
 

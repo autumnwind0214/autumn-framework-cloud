@@ -54,14 +54,6 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
     }
 
     @Override
-    public Boolean putIsLock(Long roleId, Integer isLock) {
-        Role role = new Role();
-        role.setId(roleId);
-        role.setIsLock(isLock);
-        return updateById(role);
-    }
-
-    @Override
     @Transactional(rollbackFor = Exception.class)
     public Boolean delete(Long[] roleIds) {
         List<Long> list = Arrays.asList(roleIds);

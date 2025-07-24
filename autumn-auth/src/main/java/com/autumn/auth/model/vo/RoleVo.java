@@ -7,9 +7,9 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 /**
+ * 角色列表视图
+ *
  * @author autumn
- * @desc 角色列表视图
- * @date 2025年05月02日
  */
 @Data
 @AutoMapper(target = Role.class)
@@ -21,7 +21,9 @@ public class RoleVo {
 
     String permission;
 
-    Integer isLock;
+    Integer status;
+
+    String remark;
 
     LocalDateTime createTime;
 
