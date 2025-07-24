@@ -1,6 +1,7 @@
 package com.autumn.auth.service.impl;
 
 
+import cn.hutool.core.lang.Assert;
 import com.autumn.auth.entity.Role;
 import com.autumn.auth.entity.RoleMenu;
 import com.autumn.auth.mapper.RoleMapper;
@@ -84,7 +85,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
 
     @Override
     public Boolean edit(RoleDto dto) {
-        if (checkDuplicateRoles(dto.getId(), dto.getPermission())) {
+        if (checkDuplicateRoles(dto.getId(), dto.getRoleName())) {
             throw new AutumnException(ResultCodeEnum.DUPLICATE_ROLES);
         }
         Role role = MapstructUtils.convert(dto, Role.class);
@@ -96,16 +97,24 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
         return roleMapper.selectVoList();
     }
 
+    @Override
+    public Boolean editStatus(Long roleId, Integer status) {
+        Role role = new Role();
+        role.setId(roleId);
+        role.setStatus(status);
+        return updateById(role);
+    }
+
     /**
      * 检查角色名是否重复
      *
-     * @param id       id
-     * @param permission 角色标识
+     * @param id   id
+     * @param role 角色
      * @return true 表示重复，false 表示不重复
      */
-    private boolean checkDuplicateRoles(Long id, String permission) {
+    private boolean checkDuplicateRoles(Long id, String role) {
         LambdaQueryWrapper<Role> wrapper = new LambdaQueryWrapper<>();
-        wrapper.and(w -> w.eq(Role::getPermission, permission));
+        wrapper.and(w -> w.eq(Role::getRole, role));
         if (id != null) {
             wrapper.and(w -> w.ne(Role::getId, id));
         }

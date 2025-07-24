@@ -73,6 +73,15 @@ public class RoleController {
         return R.success(roleService.edit(dto));
     }
 
+    // @PreAuthorize("hasAuthority('system:role:status')")
+    @PutMapping("/status/{roleId}/{status}")
+    public R<Boolean> editStatus(@NotNull @PathVariable Long roleId, @NotNull @PathVariable Integer status) {
+        if (Long.valueOf(1L).equals(roleId)) {
+            return R.fail("禁止禁用超级管理员");
+        }
+        return R.success(roleService.editStatus(roleId, status));
+    }
+
     @PreAuthorize("hasAuthority('system:role:delete')")
     @DeleteMapping("{ids}")
     public R<Boolean> delete(@PathVariable Long[] ids) {
@@ -90,7 +99,7 @@ public class RoleController {
     @PutMapping("/auth")
     public R<Boolean> editAuth(@Valid @RequestBody RoleAuthDto dto) {
         if (Long.valueOf(1L).equals(dto.getRoleId())) {
-            // return R.fail("禁止修改管理员权限");
+            return R.fail("禁止修改管理员权限");
         }
         return R.success(roleService.editAuth(dto));
     }

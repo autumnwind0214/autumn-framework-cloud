@@ -10,8 +10,6 @@ import org.apache.ibatis.annotations.Param;
 
 /**
  * @author autumn
- * @desc RoleMapper
- * @date 2025年05月02日
  */
 @Mapper
 public interface RoleMapper extends BaseMapperPlus<Role, RoleVo> {

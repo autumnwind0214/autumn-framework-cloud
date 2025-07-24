@@ -12,12 +12,11 @@
                 AND role.role_name LIKE CONCAT(CONCAT('%', #{query.roleName}),'%')
             </if>
 
-            <if test="query.permission != null and query.permission != ''">
-                AND role.permission LIKE CONCAT(CONCAT('%', #{query.permission}),'%')
+            <if test="query.role != null and query.role != ''">
+                AND role.role LIKE CONCAT(CONCAT('%', #{query.role}),'%')
             </if>
-
-            <if test="query.isLock != null">
-                AND role.is_lock = #{query.isLock}
+            <if test="query.status != null">
+                AND role.status = #{query.status}
             </if>
         </where>
     </select>

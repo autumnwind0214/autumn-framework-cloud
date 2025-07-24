@@ -19,7 +19,7 @@ public class RoleVo {
 
     String roleName;
 
-    String permission;
+    String role;
 
     Integer status;
 

@@ -34,7 +34,7 @@ public class Role implements Serializable {
 
     Integer status;
 
-    String permission;
+    String role;
 
     @TableField(fill = FieldFill.INSERT)
     LocalDateTime createTime;

@@ -7,6 +7,7 @@ import com.autumn.auth.model.dto.RoleDto;
 import com.autumn.auth.model.vo.RoleVo;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 
@@ -27,4 +28,6 @@ public interface IRoleService extends IService<Role> {
     Boolean edit(RoleDto dto);
 
     List<RoleVo> getListAll();
+
+    Boolean editStatus(Long roleId, Integer status);
 }
