@@ -84,5 +84,7 @@ public class MenuVo {
         private String link;
 
         private String badgeType;
+
+        private String badge;
     }
 }

@@ -17,8 +17,6 @@ import java.util.List;
 public interface IRoleService extends IService<Role> {
     Page<RoleVo> listPage(RoleDto form);
 
-    List<Long> getRoleMenuId(Long roleId);
-
     Boolean delete(Long[] roleId);
 
     Boolean add(RoleDto dto);

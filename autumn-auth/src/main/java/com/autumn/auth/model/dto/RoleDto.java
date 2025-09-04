@@ -40,6 +40,8 @@ public class RoleDto extends PageQuery {
 
     private Long[] permissions;
 
+    private String remark;
+
     /**
      * 是否锁定
      */

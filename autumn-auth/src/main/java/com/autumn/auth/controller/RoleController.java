@@ -44,11 +44,6 @@ public class RoleController {
         return roleService.listPage(dto);
     }
 
-    @GetMapping("/roleMenuId/{roleId}")
-    public List<Long> getRoleMenuId(@PathVariable Long roleId) {
-        return roleService.getRoleMenuId(roleId);
-    }
-
     @GetMapping("/roleMenus")
     public List<RoleMenuVo> getRoleMenus() {
         return menuService.getRoleMenus();
@@ -68,7 +63,7 @@ public class RoleController {
     @PreAuthorize("hasRole('admin') || hasAuthority('system:role:edit')")
     @PutMapping
     public R<Boolean> edit(@Validated(UpdateGroup.class) @RequestBody RoleDto dto) {
-        if (Long.valueOf(1L).equals(dto.getId()) && Integer.valueOf(0).equals(dto.getStatus())) {
+        if (Long.valueOf(1L).equals(dto.getId())) {
             return R.fail("禁止修改超级管理员");
         }
         return R.success(roleService.edit(dto));

@@ -44,15 +44,6 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
     }
 
     @Override
-    public List<Long> getRoleMenuId(Long roleId) {
-        // 获取角色所绑定的菜单
-        LambdaQueryWrapper<RoleMenu> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.select(RoleMenu::getMenuId).eq(RoleMenu::getRoleId, roleId);
-        List<RoleMenu> list = roleMenuService.list(queryWrapper);
-        return list.stream().map(RoleMenu::getMenuId).toList();
-    }
-
-    @Override
     @Transactional(rollbackFor = Exception.class)
     public Boolean delete(Long[] roleIds) {
         List<Long> list = Arrays.asList(roleIds);
