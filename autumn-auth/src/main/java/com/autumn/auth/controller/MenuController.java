@@ -46,25 +46,25 @@ public class MenuController {
     // 新增
     @PreAuthorize("hasRole('admin') || hasAuthority('System:Menu:Create')")
     @PostMapping
-    public R<Boolean> add(@RequestBody MenuDto dto) {
+    public Boolean add(@RequestBody MenuDto dto) {
         Boolean result = menuService.addMenu(dto);
         messageProducer.sendMessage("菜单路由新增", RabbitMqConfig.MENU_EXCHANGE, RabbitMqConfig.MENU_KEY);
-        return R.success(result);
+        return result;
     }
 
     // 编辑
     @PreAuthorize("hasRole('admin') || hasAuthority('System:Menu:Edit')")
     @PutMapping
-    public R<Boolean> edit(@RequestBody MenuDto dto) {
+    public Boolean edit(@RequestBody MenuDto dto) {
         Boolean result = menuService.updateMenu(dto);
         messageProducer.sendMessage("菜单路由更新", RabbitMqConfig.MENU_EXCHANGE, RabbitMqConfig.MENU_KEY);
-        return R.success(result);
+        return result;
     }
 
     // 详情
     @GetMapping("/{id}")
-    public R<MenuVo> getMenu(@PathVariable Long id) {
-        return R.success(menuService.getMenu(id));
+    public MenuVo getMenu(@PathVariable Long id) {
+        return menuService.getMenu(id);
     }
 
     // 删除
