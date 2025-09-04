@@ -14,5 +14,5 @@ public class RoleAuthDto {
     @NotNull(message = "角色id不能为null")
     Long roleId;
 
-    Long[] permission;
+    Long[] permissions;
 }

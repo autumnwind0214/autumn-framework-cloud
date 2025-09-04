@@ -1,11 +1,9 @@
 package com.autumn.auth.service.impl;
 
 
-import cn.hutool.core.lang.Assert;
 import com.autumn.auth.entity.Role;
 import com.autumn.auth.entity.RoleMenu;
 import com.autumn.auth.mapper.RoleMapper;
-import com.autumn.auth.model.dto.RoleAuthDto;
 import com.autumn.auth.model.dto.RoleDto;
 import com.autumn.auth.model.vo.RoleVo;
 import com.autumn.auth.service.IRoleMenuService;
@@ -19,8 +17,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -63,33 +61,30 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public Boolean editAuth(RoleAuthDto dto) {
-        roleMenuService.remove(new LambdaQueryWrapper<RoleMenu>().eq(RoleMenu::getRoleId, dto.getRoleId()));
-        List<RoleMenu> list = new ArrayList<>();
-        for (Long permission : dto.getPermission()) {
-            RoleMenu roleMenu = new RoleMenu(dto.getRoleId(), permission);
-            list.add(roleMenu);
-        }
-        return roleMenuService.saveBatch(list);
-    }
-
-    @Override
     public Boolean add(RoleDto dto) {
         if (checkDuplicateRoles(null, dto.getRoleName())) {
             throw new AutumnException(ResultCodeEnum.DUPLICATE_ROLES);
         }
         Role role = MapstructUtils.convert(dto, Role.class);
-        return save(role);
+        Assert.notNull(role, "添加失败");
+        if (save(role)) {
+            return roleMenuService.editAuth(role.getId(), dto.getPermissions());
+        }
+        return false;
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Boolean edit(RoleDto dto) {
         if (checkDuplicateRoles(dto.getId(), dto.getRoleName())) {
             throw new AutumnException(ResultCodeEnum.DUPLICATE_ROLES);
         }
         Role role = MapstructUtils.convert(dto, Role.class);
-        return updateById(role);
+        Assert.notNull(role, "修改失败");
+        if (updateById(role)) {
+            return roleMenuService.editAuth(role.getId(), dto.getPermissions());
+        }
+        return false;
     }
 
     @Override

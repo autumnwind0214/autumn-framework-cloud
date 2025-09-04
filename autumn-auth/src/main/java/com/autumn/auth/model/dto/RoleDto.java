@@ -35,8 +35,10 @@ public class RoleDto extends PageQuery {
     /**
      * 角色
      */
-    @NotBlank(groups = {UpdateGroup.class, InsertGroup.class}, message = "请输入角色")
+    // @NotBlank(groups = {UpdateGroup.class, InsertGroup.class}, message = "请输入角色")
     private String role;
+
+    private Long[] permissions;
 
     /**
      * 是否锁定

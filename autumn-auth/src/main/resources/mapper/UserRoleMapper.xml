@@ -57,7 +57,7 @@
         user_id;
     </select>
     <select id="queryRolesByUserId" resultType="java.lang.String">
-        SELECT DISTINCT(role.permission)
+        SELECT DISTINCT(role.role)
         FROM user_role
                  LEFT JOIN role ON user_role.role_id = role.id
         WHERE user_id = #{userId}

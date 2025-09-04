@@ -26,7 +26,7 @@ spring:
         namespace: ${spring.application.namespace}
         server-addr: ${spring.application.ip}
         prefix: ${spring.application.name}.yml
-        file-extension: yaml
+        file-extension: yml
         group: ${spring.profiles.active}
         shared-configs:
           - data-id: common-mybatis.yml

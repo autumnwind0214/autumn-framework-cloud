@@ -15,6 +15,7 @@ import java.util.List;
  * 菜单返回值
  * @author autumn
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
 @AutoMapper(target = Menu.class)
 public class MenuVo {
@@ -65,6 +66,7 @@ public class MenuVo {
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private List<MenuVo> children;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @Data
     public static class Meta implements Serializable {
 

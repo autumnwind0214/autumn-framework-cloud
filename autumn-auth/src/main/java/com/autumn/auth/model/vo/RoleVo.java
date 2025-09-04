@@ -5,6 +5,7 @@ import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 角色列表视图
@@ -24,6 +25,8 @@ public class RoleVo {
     Integer status;
 
     String remark;
+
+    List<Long> permissions;
 
     LocalDateTime createTime;
 

@@ -21,8 +21,6 @@ public interface IRoleService extends IService<Role> {
 
     Boolean delete(Long[] roleId);
 
-    Boolean editAuth(RoleAuthDto dto);
-
     Boolean add(RoleDto dto);
 
     Boolean edit(RoleDto dto);
