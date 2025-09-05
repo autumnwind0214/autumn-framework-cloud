@@ -5,13 +5,13 @@ import cn.hutool.core.lang.Assert;
 import com.autumn.auth.entity.Role;
 import com.autumn.auth.entity.RoleMenu;
 import com.autumn.auth.mapper.RoleMapper;
-import com.autumn.auth.model.dto.RoleAuthDto;
 import com.autumn.auth.model.dto.RoleDto;
 import com.autumn.auth.model.vo.RoleVo;
 import com.autumn.auth.service.IRoleMenuService;
 import com.autumn.auth.service.IRoleService;
 import com.autumn.common.core.exception.AutumnException;
 import com.autumn.common.core.result.ResultCodeEnum;
+import com.autumn.common.core.utils.I18nUtils;
 import com.autumn.common.core.utils.MapstructUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -20,7 +20,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -97,7 +96,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
     @Override
     public RoleVo getRole(Long id) {
         RoleVo roleVo = roleMapper.selectVoById(id);
-        Assert.notNull(roleVo, "角色不存在");
+        Assert.notNull(roleVo, I18nUtils.getMessage(I18nUtils.ROLE_NOT_EXIST, null));
         // 获取角色权限
         List<Long> permissions = roleMenuService.getRolePermissions(roleVo.getId());
         roleVo.setPermissions(permissions);

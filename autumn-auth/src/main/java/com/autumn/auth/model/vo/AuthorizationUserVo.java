@@ -5,6 +5,7 @@ import com.autumn.common.sensitive.annotation.SensitiveData;
 import com.autumn.common.sensitive.enums.SensitiveTypeEnum;
 import com.autumn.mybatis.handler.BooleanTypeHandler;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
@@ -32,7 +33,7 @@ public class AuthorizationUserVo implements Serializable{
     Long id;
 
     /**
-     * 账号
+     * 用户名
      */
     String username;
 
@@ -71,6 +72,7 @@ public class AuthorizationUserVo implements Serializable{
     /**
      * 最后登录时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     LocalDateTime loginTime;
 
     /**

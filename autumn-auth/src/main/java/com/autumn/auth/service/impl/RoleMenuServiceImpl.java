@@ -27,7 +27,7 @@ public class RoleMenuServiceImpl extends ServiceImpl<RoleMenuMapper, RoleMenu> i
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Boolean setPermission(Role role, Long[] permissions) {
-        Assert.notNull(role, I18nUtils.getMessage("ROLE_NOT_EMPTY", null));
+        Assert.notNull(role, I18nUtils.getMessage(I18nUtils.ROLE_NOT_EMPTY, null));
         this.remove(new LambdaQueryWrapper<RoleMenu>().eq(RoleMenu::getRoleId, role.getId()));
         List<RoleMenu> list = new ArrayList<>();
         Arrays.stream(permissions).sorted().forEach(permission -> {

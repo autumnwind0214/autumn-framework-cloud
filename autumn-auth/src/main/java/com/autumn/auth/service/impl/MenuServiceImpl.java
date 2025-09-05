@@ -131,7 +131,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
 
     @Override
     public Boolean updateMenu(MenuDto dto) {
-        Assert.isTrue(checkPathUnique(dto.getId(), dto.getPath()), I18nUtils.getMessage("MENU_NAME_EXIST", null));
+        Assert.isTrue(checkPathUnique(dto.getId(), dto.getPath()), I18nUtils.getMessage(I18nUtils.MENU_NAME_EXIST, null));
         Assert.isTrue(checkNameUnique(dto.getId(), dto.getName()), "菜单名称已存在");
         Menu menu = new Menu();
         MapstructUtils.convert(dto, menu);
