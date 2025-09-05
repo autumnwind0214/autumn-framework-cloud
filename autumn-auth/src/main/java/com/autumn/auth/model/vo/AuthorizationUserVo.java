@@ -6,6 +6,7 @@ import com.autumn.common.sensitive.enums.SensitiveTypeEnum;
 import com.autumn.mybatis.handler.BooleanTypeHandler;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
@@ -22,6 +23,7 @@ import java.util.List;
  * @desc 用户信息
  * @date 2025年05月13日
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
 @AutoMapper(target = AuthorizationUser.class)
 public class AuthorizationUserVo implements Serializable{

@@ -4,9 +4,23 @@
 
 <mapper namespace="com.autumn.auth.mapper.RoleMapper">
 
-    <select id="listPage" resultType="com.autumn.auth.model.vo.RoleVo">
-        select role.id, role.role_name, role.role, role.status, role.remark, role.create_time, role.update_time
+    <resultMap id="listPageMap" type="com.autumn.auth.model.vo.RoleVo">
+        <id property="id" column="id"/>
+        <result property="roleName" column="role_name"/>
+        <result property="role" column="role"/>
+        <result property="status" column="status"/>
+        <result property="remark" column="remark"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <collection ofType="long" property="permissions">
+            <result property="value" column="menu_id"/>
+        </collection>
+    </resultMap>
+
+    <select id="listPage" resultMap="listPageMap">
+        select role.id, role.role_name, role.role, role.status, role.remark, role.create_time, role.update_time, role_menu.menu_id
         from role
+        left join role_menu on role.id = role_menu.role_id
         <where>
             <if test="query.roleName != null and query.roleName != ''">
                 AND role.role_name LIKE CONCAT(CONCAT('%', #{query.roleName}),'%')
