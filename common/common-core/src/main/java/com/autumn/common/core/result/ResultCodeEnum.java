@@ -123,6 +123,6 @@ public enum ResultCodeEnum {
     }
 
     public String getMessage() {
-        return I18nUtils.getMessage(this.key, Locale.CHINA);
+        return I18nUtils.getMessage(this.key, null);
     }
 }

@@ -26,4 +26,6 @@ public interface IRoleService extends IService<Role> {
     List<RoleVo> getListAll();
 
     Boolean editStatus(Long roleId, Integer status);
+
+    RoleVo getRole(Long id);
 }

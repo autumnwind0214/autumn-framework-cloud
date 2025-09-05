@@ -8,6 +8,7 @@ import com.alicp.jetcache.anno.CacheType;
 import com.alicp.jetcache.template.QuickConfig;
 import com.autumn.auth.entity.AuthorizationUser;
 import com.autumn.auth.entity.Menu;
+import com.autumn.auth.enums.MenuBadgeTypeEnum;
 import com.autumn.auth.enums.MenuTypesEnum;
 import com.autumn.auth.mapper.MenuMapper;
 import com.autumn.auth.mapper.UserRoleMapper;
@@ -18,11 +19,13 @@ import com.autumn.auth.model.vo.DynamicRouteVo;
 import com.autumn.auth.service.IAuthorizationUserService;
 import com.autumn.auth.service.IMenuService;
 import com.autumn.common.core.utils.BeanCopyUtils;
+import com.autumn.common.core.utils.I18nUtils;
 import com.autumn.common.core.utils.MapstructUtils;
 import com.autumn.common.core.utils.TreeBuilderUtils;
 import com.autumn.common.redis.constant.RedisConstant;
 import com.autumn.common.redis.core.RedisOperator;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -128,11 +131,14 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
 
     @Override
     public Boolean updateMenu(MenuDto dto) {
-        Assert.isTrue(checkPathUnique(dto.getId(), dto.getPath()));
-        Assert.isTrue(checkNameUnique(dto.getId(), dto.getName()));
+        Assert.isTrue(checkPathUnique(dto.getId(), dto.getPath()), I18nUtils.getMessage("MENU_NAME_EXIST", null));
+        Assert.isTrue(checkNameUnique(dto.getId(), dto.getName()), "菜单名称已存在");
         Menu menu = new Menu();
         MapstructUtils.convert(dto, menu);
         MapstructUtils.convert(dto.getMeta(), menu);
+        if (!MenuBadgeTypeEnum.normal.getCode().equals(menu.getBadgeType())) {
+            menu.setBadge("");
+        }
         return this.updateById(menu);
     }
 

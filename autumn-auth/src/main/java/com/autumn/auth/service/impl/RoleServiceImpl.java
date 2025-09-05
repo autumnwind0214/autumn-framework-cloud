@@ -46,15 +46,6 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
     }
 
     @Override
-    public List<Long> getRoleMenuId(Long roleId) {
-        // 获取角色所绑定的菜单
-        LambdaQueryWrapper<RoleMenu> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.select(RoleMenu::getMenuId).eq(RoleMenu::getRoleId, roleId);
-        List<RoleMenu> list = roleMenuService.list(queryWrapper);
-        return list.stream().map(RoleMenu::getMenuId).toList();
-    }
-
-    @Override
     @Transactional(rollbackFor = Exception.class)
     public Boolean delete(Long[] roleIds) {
         List<Long> list = Arrays.asList(roleIds);
@@ -64,32 +55,30 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Boolean editAuth(RoleAuthDto dto) {
-        roleMenuService.remove(new LambdaQueryWrapper<RoleMenu>().eq(RoleMenu::getRoleId, dto.getRoleId()));
-        List<RoleMenu> list = new ArrayList<>();
-        for (Long permission : dto.getPermission()) {
-            RoleMenu roleMenu = new RoleMenu(dto.getRoleId(), permission);
-            list.add(roleMenu);
-        }
-        return roleMenuService.saveBatch(list);
-    }
-
-    @Override
     public Boolean add(RoleDto dto) {
         if (checkDuplicateRoles(null, dto.getRoleName())) {
             throw new AutumnException(ResultCodeEnum.DUPLICATE_ROLES);
         }
         Role role = MapstructUtils.convert(dto, Role.class);
-        return save(role);
+        if (save( role)) {
+            // 配置角色权限
+            return roleMenuService.setPermission(role, dto.getPermissions());
+        }
+        return false;
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Boolean edit(RoleDto dto) {
         if (checkDuplicateRoles(dto.getId(), dto.getRoleName())) {
             throw new AutumnException(ResultCodeEnum.DUPLICATE_ROLES);
         }
         Role role = MapstructUtils.convert(dto, Role.class);
-        return updateById(role);
+        if (updateById(role)) {
+            // 配置角色权限
+            return roleMenuService.setPermission(role, dto.getPermissions());
+        }
+        return false;
     }
 
     @Override
@@ -103,6 +92,16 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
         role.setId(roleId);
         role.setStatus(status);
         return updateById(role);
+    }
+
+    @Override
+    public RoleVo getRole(Long id) {
+        RoleVo roleVo = roleMapper.selectVoById(id);
+        Assert.notNull(roleVo, "角色不存在");
+        // 获取角色权限
+        List<Long> permissions = roleMenuService.getRolePermissions(roleVo.getId());
+        roleVo.setPermissions(permissions);
+        return roleVo;
     }
 
     /**

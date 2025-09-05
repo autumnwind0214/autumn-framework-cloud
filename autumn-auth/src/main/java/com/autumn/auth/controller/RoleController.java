@@ -1,8 +1,5 @@
 package com.autumn.auth.controller;
 
-import cn.hutool.core.util.ArrayUtil;
-
-import com.autumn.auth.model.dto.RoleAuthDto;
 import com.autumn.auth.model.dto.RoleDto;
 import com.autumn.auth.model.vo.RoleMenuVo;
 import com.autumn.auth.model.vo.RoleVo;
@@ -12,7 +9,6 @@ import com.autumn.common.core.result.R;
 import com.autumn.mybatis.group.InsertGroup;
 import com.autumn.mybatis.group.UpdateGroup;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -52,6 +48,11 @@ public class RoleController {
     @GetMapping("/listAll")
     public List<RoleVo> getListAll() {
         return roleService.getListAll();
+    }
+
+    @GetMapping("/{id}")
+    public RoleVo get(@PathVariable Long id) {
+        return roleService.getRole(id);
     }
 
     @PreAuthorize("hasRole('admin') || hasAuthority('system:role:add')")

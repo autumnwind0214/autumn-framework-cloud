@@ -41,6 +41,6 @@ public class Role implements Serializable {
     @TableField(fill = FieldFill.INSERT)
     LocalDateTime createTime;
 
-    @TableField(fill = FieldFill.UPDATE)
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     LocalDateTime updateTime;
 }
