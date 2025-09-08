@@ -3,6 +3,8 @@ package com.autumn.auth.entity;
 import com.alibaba.fastjson2.annotation.JSONField;
 import com.autumn.auth.model.vo.AuthorizationUserVo;
 import com.autumn.mybatis.core.model.BaseEntity;
+import com.autumn.mybatis.handler.BooleanTypeHandler;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -73,12 +75,6 @@ public class AuthorizationUser extends BaseEntity {
     LocalDateTime accountExpire;
 
     /**
-     * 账户是否被锁定
-     * 0: 已锁定    1: 未锁定
-     */
-    Integer locked;
-
-    /**
      * 用户凭据过期时间
      */
     LocalDateTime credentialExpire;
@@ -95,10 +91,16 @@ public class AuthorizationUser extends BaseEntity {
     LocalDateTime loginTime;
 
     /**
-     * 启用状态
-     * 0: 未启用    1: 已启用
+     * 禁用状态
+     * 0: 禁用    1: 未禁用
      */
-    Integer status;
+    Integer disabled;
+
+    /**
+     * 锁定状态
+     * 0: 锁定    1: 未锁定
+     */
+    Integer locked;
 
     /**
      * 获取用户凭据是否过期
@@ -110,11 +112,13 @@ public class AuthorizationUser extends BaseEntity {
 
     /**
      * 指示是否已启用此用户。禁用的用户不能身份验证
-     *
+     * 永久性：
+     * 1.用户违规操作
+     * 2.出于安全考虑管理员禁用账户
      * @return true: 禁用    false: 启用
      */
     public boolean isEnabled() {
-        return status != 1;
+        return disabled != 1;
     }
 
     /**
@@ -127,9 +131,12 @@ public class AuthorizationUser extends BaseEntity {
 
     /**
      * 指示是否已锁定此用户。锁定的用户不能身份验证
+     * 临时性：
+     * 1.多次登录失败触发安全机制
+     * 2.系统检测到异常登录行为
      * true: 锁定    false: 未锁定
      */
     public boolean isAccountNonLocked() {
-        return status != 1;
+        return locked != 1;
     }
 }

@@ -86,13 +86,25 @@ public class AuthorizationUserController {
         return R.success(authorizationUserService.edit(dto));
     }
 
-    @PreAuthorize("hasAuthority('system:user:status')")
-    @PutMapping("/status/{id}/{status}")
-    public R<Boolean> editStatus(@PathVariable("id") @NotNull Long id, @PathVariable("status") @NotNull @ValidStatus Integer status) {
+    /**
+     * 禁用
+     */
+    @PreAuthorize("hasRole('admin') || hasAuthority('system:user:disabled')")
+    @PutMapping("/disabled/{id}/{disabled}")
+    public R<Boolean> disabled(@PathVariable("id") @NotNull Long id, @PathVariable("disabled") @NotNull @ValidStatus Integer disabled) {
         if (id == 1) {
-            return R.fail("禁止修改超级管理员状态");
+            return R.fail("禁止禁用超级管理员");
         }
-        return R.success(authorizationUserService.editStatus(id, status));
+        return R.success(authorizationUserService.disabled(id, disabled));
+    }
+
+    /**
+     * 解锁
+     */
+    @PreAuthorize("hasRole('admin') || hasAuthority('system:user:unlock')")
+    @PutMapping("/unlock/{userId}")
+    public R<Boolean> unlock(@PathVariable("userId") @NotNull Long userId) {
+        return R.success(authorizationUserService.unlock(userId));
     }
 
     @PreAuthorize("hasAuthority('system:user:changePassword')")

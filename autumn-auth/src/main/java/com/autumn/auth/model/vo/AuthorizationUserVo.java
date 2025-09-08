@@ -88,7 +88,9 @@ public class AuthorizationUserVo implements Serializable{
     // 用户权限
     String[] permissions;
 
-    Integer status;
+    Integer disabled;
+
+    Integer locked;
 
     String remark;
 

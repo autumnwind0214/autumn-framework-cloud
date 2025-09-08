@@ -144,10 +144,9 @@ public class AuthorizationUserServiceImpl extends ServiceImpl<AuthorizationUserM
     }
 
     @Override
-    public Boolean editStatus(Long id, Integer status) {
+    public Boolean disabled(Long id, Integer disabled) {
         AuthorizationUser user = new AuthorizationUser();
-        user.setStatus(status);
-        user.setUpdateTime(LocalDateTime.now());
+        user.setDisabled(disabled);
         user.setId(id);
         return updateById(user);
     }
@@ -177,6 +176,14 @@ public class AuthorizationUserServiceImpl extends ServiceImpl<AuthorizationUserM
         AuthorizationUser user = new AuthorizationUser();
         user.setId(dto.getUserId());
         user.setAvatar(dto.getReviewUrl());
+        return updateById(user);
+    }
+
+    @Override
+    public Boolean unlock(Long userId) {
+        AuthorizationUser user = new AuthorizationUser();
+        user.setId(userId);
+        user.setLocked(1);
         return updateById(user);
     }
 

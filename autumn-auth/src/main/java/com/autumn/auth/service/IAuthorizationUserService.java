@@ -8,12 +8,11 @@ import com.autumn.auth.model.dto.UserInfoDto;
 import com.autumn.auth.model.vo.AuthorizationUserVo;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 /**
  * @author autumn
- * @desc IAuthorizationUserService
- * @date 2025年05月12日
  */
 public interface IAuthorizationUserService extends IService<AuthorizationUser> , UserDetailsService {
 
@@ -25,7 +24,7 @@ public interface IAuthorizationUserService extends IService<AuthorizationUser> ,
 
     Boolean edit(UserDto dto);
 
-    Boolean editStatus(Long id, Integer status);
+    Boolean disabled(Long id, Integer disabled);
 
     Boolean delete(Long[] ids);
 
@@ -34,4 +33,7 @@ public interface IAuthorizationUserService extends IService<AuthorizationUser> ,
     Long[] getRoleIds(Long userId);
 
     Boolean uploadAvatar(UserAvatarDto dto);
+
+    Boolean unlock(@NotNull Long userId);
+
 }
