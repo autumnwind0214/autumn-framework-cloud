@@ -21,16 +21,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.authorization.AuthorizationDecision;
-import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
@@ -56,7 +52,6 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.security.web.util.UrlUtils;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 import org.springframework.util.StringUtils;
@@ -70,7 +65,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 /**
  * 认证配置
@@ -222,7 +216,7 @@ public class AuthorizationConfig {
         http.authorizeHttpRequests((authorize) -> authorize
                         // 放行静态资源和不需要认证的url
                         .requestMatchers(customSecurityProperties.getIgnoreUriList().toArray(new String[0])).permitAll()
-                        .anyRequest().access(new AdminAuthorityAuthorizationManager())
+                        .anyRequest().authenticated()
                 )
                 // 指定登录页面
                 .formLogin(formLogin -> {
@@ -478,34 +472,6 @@ public class AuthorizationConfig {
         jwtGenerator.setJwtCustomizer(oAuth2TokenCustomizer());
         OAuth2TokenGenerator<OAuth2RefreshToken> refreshTokenGenerator = new RefreshTokenGeneratorHandler();
         return new DelegatingOAuth2TokenGenerator(jwtGenerator, refreshTokenGenerator);
-    }
-
-    /**
-     * 自定义权限管理器，用于处理admin角色的特殊权限
-     * admin角色拥有所有权限，可以访问所有接口
-     */
-    public static class AdminAuthorityAuthorizationManager implements AuthorizationManager<RequestAuthorizationContext> {
-
-        @Override
-        public AuthorizationDecision check(Supplier<Authentication> authentication, RequestAuthorizationContext object) {
-            Authentication auth = authentication.get();
-            
-            // 如果用户未认证，拒绝访问
-            if (auth == null || !auth.isAuthenticated()) {
-                return new AuthorizationDecision(false);
-            }
-            
-            // 检查用户是否具有admin角色
-            for (GrantedAuthority authority : auth.getAuthorities()) {
-                if ("ROLE_admin".equals(authority.getAuthority())) {
-                    // admin角色拥有所有权限
-                    return new AuthorizationDecision(true);
-                }
-            }
-            
-            // 非admin角色按原有逻辑处理（返回null表示使用默认的权限检查机制）
-            return null;
-        }
     }
 
 }

@@ -14,6 +14,7 @@ public class I18nUtils {
     public final static String ROLE_NOT_EXIST = "ROLE_NOT_EXIST";
     public final static String ROLE_NOT_EMPTY = "ROLE_NOT_EMPTY";
     public final static String MENU_NAME_EXIST = "MENU_NAME_EXIST";
+    public final static String BAN_DISABLED_USER = "BAN_DISABLED_USER";
 
     public static String getMessage(String key, String label) {
         Locale locale = LanguageEnum.getByLocale(label);

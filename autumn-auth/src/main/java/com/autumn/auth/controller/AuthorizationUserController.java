@@ -7,6 +7,7 @@ import com.autumn.auth.service.IUserRoleService;
 import com.autumn.auth.utils.SecurityUtils;
 import com.autumn.common.core.annotation.ValidStatus;
 import com.autumn.common.core.result.R;
+import com.autumn.common.core.utils.I18nUtils;
 import com.autumn.common.sensitive.annotation.Sensitive;
 import com.autumn.mybatis.group.InsertGroup;
 import com.autumn.mybatis.group.UpdateGroup;
@@ -22,6 +23,7 @@ import java.util.Arrays;
 
 /**
  * 用户管理控制器
+ *
  * @author autumn
  **/
 @Slf4j
@@ -89,11 +91,11 @@ public class AuthorizationUserController {
     /**
      * 禁用
      */
-    @PreAuthorize("hasRole('admin') || hasAuthority('system:user:disabled')")
+    @PreAuthorize("hasAuthority('system:user:disabled')")
     @PutMapping("/disabled/{id}/{disabled}")
     public R<Boolean> disabled(@PathVariable("id") @NotNull Long id, @PathVariable("disabled") @NotNull @ValidStatus Integer disabled) {
         if (id == 1) {
-            return R.fail("禁止禁用超级管理员");
+            return R.fail(I18nUtils.getMessage(I18nUtils.BAN_DISABLED_USER, null));
         }
         return R.success(authorizationUserService.disabled(id, disabled));
     }
@@ -101,7 +103,7 @@ public class AuthorizationUserController {
     /**
      * 解锁
      */
-    @PreAuthorize("hasRole('admin') || hasAuthority('system:user:unlock')")
+    @PreAuthorize("hasAuthority('system:user:unlock')")
     @PutMapping("/unlock/{userId}")
     public R<Boolean> unlock(@PathVariable("userId") @NotNull Long userId) {
         return R.success(authorizationUserService.unlock(userId));
