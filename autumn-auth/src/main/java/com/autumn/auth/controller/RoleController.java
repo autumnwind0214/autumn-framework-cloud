@@ -45,9 +45,9 @@ public class RoleController {
         return menuService.getRoleMenus();
     }
 
-    @GetMapping("/listAll")
-    public List<RoleVo> getListAll() {
-        return roleService.getListAll();
+    @GetMapping("/all")
+    public List<RoleVo> all() {
+        return roleService.all();
     }
 
     @GetMapping("/{id}")

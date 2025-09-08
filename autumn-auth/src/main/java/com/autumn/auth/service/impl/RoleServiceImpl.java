@@ -81,7 +81,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
     }
 
     @Override
-    public List<RoleVo> getListAll() {
+    public List<RoleVo> all() {
         return roleMapper.selectVoList();
     }
 
