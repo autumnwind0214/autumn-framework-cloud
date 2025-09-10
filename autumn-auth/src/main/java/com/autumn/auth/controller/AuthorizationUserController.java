@@ -6,6 +6,7 @@ import com.autumn.auth.service.IAuthorizationUserService;
 import com.autumn.auth.service.IUserRoleService;
 import com.autumn.auth.utils.SecurityUtils;
 import com.autumn.common.core.annotation.ValidStatus;
+import com.autumn.common.core.exception.AutumnException;
 import com.autumn.common.core.result.R;
 import com.autumn.common.core.utils.I18nUtils;
 import com.autumn.common.sensitive.annotation.Sensitive;
@@ -66,11 +67,11 @@ public class AuthorizationUserController {
 
     @PreAuthorize("hasAuthority('system:user:add')")
     @PostMapping
-    public R<Boolean> add(@Validated(InsertGroup.class) @RequestBody UserDto dto) {
+    public Boolean add(@Validated(InsertGroup.class) @RequestBody UserDto dto) {
         if (!dto.getPassword().equals(dto.getNewPassword())) {
-            return R.fail("两次密码输入不一致");
+            throw new AutumnException(I18nUtils.getMessage(I18nUtils.PASSWORD_NOT_EQUALS, null));
         }
-        return R.success(authorizationUserService.add(dto));
+        return authorizationUserService.add(dto);
     }
 
     @PreAuthorize("hasAuthority('system:user:assignRole')")
@@ -81,11 +82,11 @@ public class AuthorizationUserController {
 
     @PreAuthorize("hasAuthority('system:user:edit')")
     @PutMapping
-    public R<Boolean> edit(@Validated(UpdateGroup.class) @RequestBody UserDto dto) {
+    public Boolean edit(@Validated(UpdateGroup.class) @RequestBody UserDto dto) {
         if (dto.getId().equals(1L) && !"admin".equals(dto.getUsername())) {
-            return R.fail("禁止修改超级管理员用户名");
+            throw new AutumnException(I18nUtils.getMessage(I18nUtils.BAN_OPERATION_USER, null));
         }
-        return R.success(authorizationUserService.edit(dto));
+        return authorizationUserService.edit(dto);
     }
 
     /**
@@ -93,11 +94,11 @@ public class AuthorizationUserController {
      */
     @PreAuthorize("hasAuthority('system:user:disabled')")
     @PutMapping("/disabled/{id}/{disabled}")
-    public R<Boolean> disabled(@PathVariable("id") @NotNull Long id, @PathVariable("disabled") @NotNull @ValidStatus Integer disabled) {
+    public Boolean disabled(@PathVariable("id") @NotNull Long id, @PathVariable("disabled") @NotNull @ValidStatus Integer disabled) {
         if (id == 1) {
-            return R.fail(I18nUtils.getMessage(I18nUtils.BAN_DISABLED_USER, null));
+            throw new AutumnException(I18nUtils.getMessage(I18nUtils.BAN_DISABLED_USER, null));
         }
-        return R.success(authorizationUserService.disabled(id, disabled));
+        return authorizationUserService.disabled(id, disabled);
     }
 
     /**
@@ -105,42 +106,41 @@ public class AuthorizationUserController {
      */
     @PreAuthorize("hasAuthority('system:user:unlock')")
     @PutMapping("/unlock/{userId}")
-    public R<Boolean> unlock(@PathVariable("userId") @NotNull Long userId) {
-        return R.success(authorizationUserService.unlock(userId));
+    public Boolean unlock(@PathVariable("userId") @NotNull Long userId) {
+        return authorizationUserService.unlock(userId);
     }
 
     @PreAuthorize("hasAuthority('system:user:changePassword')")
     @PutMapping("/changePassword")
-    public R<Boolean> reset(@Validated @RequestBody ChangePasswordDto dto) {
+    public Boolean reset(@Validated @RequestBody ChangePasswordDto dto) {
         if (dto.getUserId() != null && dto.getUserId() == 1) {
-            return R.fail("禁止修改超级管理员密码");
+            throw new AutumnException(I18nUtils.getMessage(I18nUtils.BAN_OPERATION_USER, null));
         }
         if (!dto.getPassword().equals(dto.getConfirmPwd())) {
-            return R.fail("两次密码输入不一致");
+            throw new AutumnException(I18nUtils.getMessage(I18nUtils.PASSWORD_NOT_EQUALS, null));
         }
-        return R.success(authorizationUserService.changePassword(dto));
+        return authorizationUserService.changePassword(dto);
     }
 
     @PreAuthorize("hasAuthority('system:user:edit')")
     @PutMapping("/uploadAvatar")
-    public R<Boolean> uploadAvatar(@Validated @RequestBody UserAvatarDto dto) {
-        return R.success(authorizationUserService.uploadAvatar(dto));
+    public Boolean uploadAvatar(@Validated @RequestBody UserAvatarDto dto) {
+        return authorizationUserService.uploadAvatar(dto);
     }
 
     @PreAuthorize("hasAuthority('system:user:edit')")
     @PutMapping("/mine")
-    public R<Boolean> putMine(@Validated(UpdateGroup.class) @RequestBody UserDto dto) {
-        return R.success(authorizationUserService.edit(dto));
+    public Boolean putMine(@Validated(UpdateGroup.class) @RequestBody UserDto dto) {
+        return authorizationUserService.edit(dto);
     }
 
     @PreAuthorize("hasAuthority('system:user:delete')")
     @DeleteMapping("/{ids}")
-    public R<Boolean> delete(@PathVariable Long[] ids) {
-        // 遍历检查超级管理员ID
-        if (Arrays.stream(ids).anyMatch(id -> id == 1L)) {
-            return R.fail("禁止删除超级管理员");
-        }
-        return R.success(authorizationUserService.delete(ids));
+    public Boolean delete(@PathVariable Long[] ids) {
+        ids = Arrays.stream(ids)
+                .filter(id -> id != 1L)
+                .toArray(Long[]::new);
+        return authorizationUserService.delete(ids);
     }
 
 
