@@ -94,7 +94,7 @@ public class AuthorizationUserVo implements Serializable{
 
     String remark;
 
-    List<Long> roleIds;
+    Long[] roleIds;
 
 
 

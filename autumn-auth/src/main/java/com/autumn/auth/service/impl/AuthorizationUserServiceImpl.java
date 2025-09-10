@@ -100,7 +100,10 @@ public class AuthorizationUserServiceImpl extends ServiceImpl<AuthorizationUserM
 
     @Override
     public AuthorizationUserVo getUserInfo(Long userId) {
-        return authorizationUserMapper.selectVoById(userId);
+        AuthorizationUserVo user = authorizationUserMapper.selectVoById(userId);
+        Assert.notNull(user, ResultCodeEnum.OBJECT_NOTNULL.getMessage());
+        user.setRoleIds(getRoleIds(userId));
+        return user;
     }
 
     @Override
