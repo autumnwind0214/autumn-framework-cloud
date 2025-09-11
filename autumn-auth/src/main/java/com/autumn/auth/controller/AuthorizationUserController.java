@@ -8,7 +8,7 @@ import com.autumn.auth.utils.SecurityUtils;
 import com.autumn.common.core.annotation.ValidStatus;
 import com.autumn.common.core.exception.AutumnException;
 import com.autumn.common.core.result.R;
-import com.autumn.common.core.utils.I18nUtils;
+import com.autumn.common.core.result.ResultCodeEnum;
 import com.autumn.common.sensitive.annotation.Sensitive;
 import com.autumn.mybatis.group.InsertGroup;
 import com.autumn.mybatis.group.UpdateGroup;
@@ -69,7 +69,7 @@ public class AuthorizationUserController {
     @PostMapping
     public Boolean add(@Validated(InsertGroup.class) @RequestBody UserDto dto) {
         if (!dto.getPassword().equals(dto.getNewPassword())) {
-            throw new AutumnException(I18nUtils.getMessage(I18nUtils.PASSWORD_NOT_EQUALS, null));
+            throw new AutumnException(ResultCodeEnum.PASSWORD_NOT_EQUALS);
         }
         return authorizationUserService.add(dto);
     }
@@ -84,7 +84,7 @@ public class AuthorizationUserController {
     @PutMapping
     public Boolean edit(@Validated(UpdateGroup.class) @RequestBody UserDto dto) {
         if (dto.getId().equals(1L) && !"admin".equals(dto.getUsername())) {
-            throw new AutumnException(I18nUtils.getMessage(I18nUtils.BAN_OPERATION_USER, null));
+            throw new AutumnException(ResultCodeEnum.BAN_OPERATION_USER);
         }
         return authorizationUserService.edit(dto);
     }
@@ -96,7 +96,7 @@ public class AuthorizationUserController {
     @PutMapping("/disabled/{id}/{disabled}")
     public Boolean disabled(@PathVariable("id") @NotNull Long id, @PathVariable("disabled") @NotNull @ValidStatus Integer disabled) {
         if (id == 1) {
-            throw new AutumnException(I18nUtils.getMessage(I18nUtils.BAN_DISABLED_USER, null));
+            throw new AutumnException(ResultCodeEnum.BAN_OPERATION_USER);
         }
         return authorizationUserService.disabled(id, disabled);
     }
@@ -114,10 +114,10 @@ public class AuthorizationUserController {
     @PutMapping("/changePassword")
     public Boolean reset(@Validated @RequestBody ChangePasswordDto dto) {
         if (dto.getUserId() != null && dto.getUserId() == 1) {
-            throw new AutumnException(I18nUtils.getMessage(I18nUtils.BAN_OPERATION_USER, null));
+            throw new AutumnException(ResultCodeEnum.BAN_OPERATION_USER);
         }
         if (!dto.getPassword().equals(dto.getConfirmPwd())) {
-            throw new AutumnException(I18nUtils.getMessage(I18nUtils.PASSWORD_NOT_EQUALS, null));
+            throw new AutumnException(ResultCodeEnum.PASSWORD_NOT_EQUALS);
         }
         return authorizationUserService.changePassword(dto);
     }
