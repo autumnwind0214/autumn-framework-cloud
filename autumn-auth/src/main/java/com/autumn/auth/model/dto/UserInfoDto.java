@@ -17,8 +17,8 @@ public class UserInfoDto extends PageQuery {
     private String username;
 
     // 昵称
-    private Integer status;
+    private String nickname;
 
-    // 手机号
-    private String phone;
+    // 禁用状态
+    private Integer disabled;
 }

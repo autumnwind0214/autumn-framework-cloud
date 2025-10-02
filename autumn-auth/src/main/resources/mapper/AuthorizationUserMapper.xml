@@ -15,11 +15,11 @@
             <if test="query.username != null and query.username != ''">
                 AND authorization_user.username LIKE CONCAT(CONCAT('%', #{query.username}),'%')
             </if>
-            <if test="query.status != null">
-                AND authorization_user.status = #{query.status}
+            <if test="query.disabled != null">
+                AND authorization_user.disabled = #{query.disabled}
             </if>
-            <if test="query.phone != null and query.phone != ''">
-                AND authorization_user.phone LIKE CONCAT(CONCAT('%', #{query.phone}),'%')
+            <if test="query.nickname != null and query.nickname != ''">
+                AND authorization_user.nickname LIKE CONCAT(CONCAT('%', #{query.nickname}),'%')
             </if>
         </where>
         ORDER BY authorization_user.create_time ASC
