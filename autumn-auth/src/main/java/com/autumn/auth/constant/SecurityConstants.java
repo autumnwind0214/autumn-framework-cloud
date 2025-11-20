@@ -2,7 +2,7 @@ package com.autumn.auth.constant;
 
 /**
  * @author autumn
- * @desc security 常量类
+ * @desc security security常量类
  * @date 2025/5/11 21:06
  **/
 public class SecurityConstants {

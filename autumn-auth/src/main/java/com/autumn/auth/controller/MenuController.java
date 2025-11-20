@@ -29,21 +29,27 @@ public class MenuController {
 
     private final MessageProducer messageProducer;
 
-    // 获取动态路由
+    /**
+     * 获取动态路由
+     */
     @GetMapping("/getAsyncRoutes")
     public List<DynamicRouteVo> getAsyncRoutes() {
         Long userId = SecurityUtils.getCurrentUserId();
         return menuService.getAsyncRoutes(userId);
     }
 
-    // 列表查询
+    /**
+     * 获取菜单列表
+     */
     @PreAuthorize("hasRole('admin') || hasAuthority('System:Menu:List')")
     @GetMapping("/list")
     public List<MenuVo> list() {
         return menuService.getList();
     }
 
-    // 新增
+    /**
+     * 添加菜单
+     */
     @PreAuthorize("hasRole('admin') || hasAuthority('System:Menu:Create')")
     @PostMapping
     public Boolean add(@RequestBody MenuDto dto) {
@@ -52,7 +58,9 @@ public class MenuController {
         return result;
     }
 
-    // 编辑
+    /**
+     * 修改菜单
+     */
     @PreAuthorize("hasRole('admin') || hasAuthority('System:Menu:Edit')")
     @PutMapping
     public Boolean edit(@RequestBody MenuDto dto) {
@@ -61,13 +69,17 @@ public class MenuController {
         return result;
     }
 
-    // 详情
+    /**
+     * 获取菜单详情
+     */
     @GetMapping("/{id}")
     public MenuVo getMenu(@PathVariable Long id) {
         return menuService.getMenu(id);
     }
 
-    // 删除
+    /**
+     * 删除菜单
+     */
     @PreAuthorize("hasRole('admin') || hasAuthority('System:Menu:Delete')")
     @DeleteMapping("/{id}")
     public Boolean delete(@PathVariable Long id) {
@@ -75,11 +87,17 @@ public class MenuController {
         return menuService.delete(id);
     }
 
+    /**
+     * 检查菜单名是否存在
+     */
     @GetMapping("/nameExists")
     public Boolean nameExists(@RequestParam(required = false) Long menuId, @RequestParam String name) {
         return menuService.checkNameUnique(menuId, name);
     }
 
+    /**
+     * 检查菜单路径是否存在
+     */
     @GetMapping("/pathExists")
     public Boolean pathExists(@RequestParam(required = false) Long menuId, @RequestParam String path) {
         return menuService.checkPathUnique(menuId, path);

@@ -101,11 +101,16 @@ public enum ResultCodeEnum {
 
 
     /* 文件上传 */
+    // 文件上传错误
     FILE_UPLOAD_ERROR(400, "FILE_UPLOAD_ERROR"),
+    // 文件类型错误
     FILE_TYPE_ERROR(400, "FILE_TYPE_ERROR"),
+    // 文件合并错误
     FILE_MERGE_ERROR(400, "FILE_MERGE_ERROR"),
 
+    // 禁止操作超级管理员用户
     BAN_OPERATION_USER(403, "BAN_OPERATION_USER"),
+    // 两次密码不一致！
     PASSWORD_NOT_EQUALS(406, "PASSWORD_NOT_EQUALS"),
 
     // 5XX服务器错误响应

@@ -32,6 +32,11 @@ public class LoginController {
     private final RedisOperator<String> redisOperator;
 
 
+    /**
+     * 获取公钥
+     *
+     * @return 公钥
+     */
     @GetMapping("/publicKey")
     public R<String> getPublicKey() {
         if (redisOperator.containKey(RSAUtils.RSA_PRIVATE_KEY) && redisOperator.containKey(RSAUtils.RSA_PUBLIC_KEY)) {
@@ -49,6 +54,11 @@ public class LoginController {
         return R.success(publicKeyBase64);
     }
 
+    /**
+     * 获取图形验证码
+     *
+     * @return 图形验证码
+     */
     @GetMapping("/getCaptcha")
     public R<CaptchaVo> getCaptcha() {
         // 使用huTool-captcha生成图形验证码
@@ -75,6 +85,11 @@ public class LoginController {
         return R.success();
     }
 
+    /**
+     * 获取邮箱验证码
+     *
+     * @param email 邮箱
+     */
     @GetMapping("/getEmailCaptcha/{email}")
     public R<Boolean> getEmailCaptcha(@PathVariable String email) {
         String code = "123456";
