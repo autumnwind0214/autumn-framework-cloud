@@ -63,7 +63,7 @@ public class MenuVo {
     // 元数据
     private Meta meta;
 
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    // @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private List<MenuVo> children;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
