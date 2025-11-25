@@ -262,7 +262,7 @@ public class AuthorizationConfig {
      */
     @Bean
     public RegisteredClientRepository registeredClientRepository(JdbcTemplate jdbcTemplate, PasswordEncoder passwordEncoder) {
-        RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
+        RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString().replaceAll("-", ""))
                 // 客户端id
                 .clientId("messaging-client")
                 // 客户端秘钥，使用密码解析器加密
@@ -309,7 +309,7 @@ public class AuthorizationConfig {
             registeredClientRepository.save(registeredClient);
         }
         // 设备码授权客户端
-        RegisteredClient deviceClient = RegisteredClient.withId(UUID.randomUUID().toString())
+        RegisteredClient deviceClient = RegisteredClient.withId(UUID.randomUUID().toString().replaceAll("-", ""))
                 .clientId("device-message-client")
                 // 公共客户端
                 .clientAuthenticationMethod(ClientAuthenticationMethod.NONE)
@@ -326,7 +326,7 @@ public class AuthorizationConfig {
         }
 
         // PKCE客户端
-        RegisteredClient pkceClient = RegisteredClient.withId(UUID.randomUUID().toString())
+        RegisteredClient pkceClient = RegisteredClient.withId(UUID.randomUUID().toString().replaceAll("-", ""))
                 .clientId("pkce-message-client")
                 // 公共客户端
                 .clientAuthenticationMethod(ClientAuthenticationMethod.NONE)
