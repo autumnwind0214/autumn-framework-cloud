@@ -13,7 +13,7 @@ public class VerifyCheckUtils {
      */
     public static void checkAdminEdit(Long userId) {
         if (userId == 1) {
-            throw new AutumnException(ResultCodeEnum.BAN_OPERATION_USER);
+            // throw new AutumnException(ResultCodeEnum.BAN_OPERATION_USER);
         }
     }
 

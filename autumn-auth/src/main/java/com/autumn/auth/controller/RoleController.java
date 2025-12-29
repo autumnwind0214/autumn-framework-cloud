@@ -4,6 +4,7 @@ import com.autumn.auth.model.dto.RoleDto;
 import com.autumn.auth.model.vo.RoleMenuVo;
 import com.autumn.auth.model.vo.RoleVo;
 import com.autumn.auth.service.IMenuService;
+import com.autumn.auth.service.IRoleMenuService;
 import com.autumn.auth.service.IRoleService;
 import com.autumn.common.core.result.R;
 import com.autumn.common.core.utils.VerifyCheckUtils;
@@ -34,6 +35,8 @@ public class RoleController {
     private final IRoleService roleService;
 
     private final IMenuService menuService;
+
+    private final IRoleMenuService roleMenuService;
 
 
     /**
@@ -98,10 +101,25 @@ public class RoleController {
      */
     @PreAuthorize("hasRole('admin') || hasAuthority('system:role:edit')")
     @PutMapping
-    public R<Boolean> edit(@Validated(UpdateGroup.class) @RequestBody RoleDto dto) {
+    public Boolean edit(@Validated(UpdateGroup.class) @RequestBody RoleDto dto) {
         VerifyCheckUtils.checkAdminEdit(dto.getId());
-        return R.success(roleService.edit(dto));
+        return roleService.edit(dto);
     }
+
+    /**
+     * 配置角色权限
+     *
+     * @param roleId    角色ID
+     * @param permissions 权限ID
+     * @return 是否成功
+     */
+    @PreAuthorize("hasRole('admin') || hasAuthority('system:role:permission')")
+    @PutMapping("/permission/{roleId}/{permissions}")
+    public Boolean setPermission(@PathVariable Long roleId, @PathVariable String permissions) {
+        // return roleMenuService.setPermission(roleId, permissions);
+        return true;
+    }
+
 
     /**
      * 修改角色状态
