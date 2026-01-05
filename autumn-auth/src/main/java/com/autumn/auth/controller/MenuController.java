@@ -1,13 +1,11 @@
 package com.autumn.auth.controller;
 
 import com.autumn.auth.config.RabbitMqConfig;
-import com.autumn.auth.model.dto.MenuCheckDto;
 import com.autumn.auth.model.dto.MenuDto;
 import com.autumn.auth.model.vo.MenuVo;
 import com.autumn.auth.model.vo.DynamicRouteVo;
 import com.autumn.auth.service.IMenuService;
 import com.autumn.auth.utils.SecurityUtils;
-import com.autumn.common.core.result.R;
 import com.autumn.auth.message.MessageProducer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
