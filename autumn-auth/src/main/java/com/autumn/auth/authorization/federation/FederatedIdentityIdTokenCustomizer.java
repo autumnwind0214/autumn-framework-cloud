@@ -1,10 +1,8 @@
 package com.autumn.auth.authorization.federation;
 
 import com.autumn.auth.constant.SecurityConstants;
-import com.autumn.auth.entity.AuthorizationUser;
 import com.autumn.auth.model.auth.BasicOAuth2User;
 import com.autumn.auth.model.auth.BasicOidcUser;
-import com.autumn.auth.model.vo.AuthorizationUserVo;
 import com.autumn.common.auth.constant.GrantAuthConstant;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
