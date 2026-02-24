@@ -2,10 +2,6 @@ package com.autumn.auth.service.impl;
 
 
 import cn.hutool.core.lang.Assert;
-import com.alicp.jetcache.Cache;
-import com.alicp.jetcache.CacheManager;
-import com.alicp.jetcache.anno.CacheType;
-import com.alicp.jetcache.template.QuickConfig;
 import com.autumn.auth.entity.AuthorizationUser;
 import com.autumn.auth.entity.Menu;
 import com.autumn.auth.enums.MenuBadgeTypeEnum;
@@ -13,21 +9,18 @@ import com.autumn.auth.enums.MenuTypesEnum;
 import com.autumn.auth.mapper.MenuMapper;
 import com.autumn.auth.mapper.UserRoleMapper;
 import com.autumn.auth.model.dto.MenuDto;
+import com.autumn.auth.model.vo.DynamicRouteVo;
 import com.autumn.auth.model.vo.MenuVo;
 import com.autumn.auth.model.vo.RoleMenuVo;
-import com.autumn.auth.model.vo.DynamicRouteVo;
 import com.autumn.auth.service.IAuthorizationUserService;
 import com.autumn.auth.service.IMenuService;
-import com.autumn.common.core.utils.BeanCopyUtils;
 import com.autumn.common.core.utils.I18nUtils;
 import com.autumn.common.core.utils.MapstructUtils;
 import com.autumn.common.core.utils.TreeBuilderUtils;
 import com.autumn.common.redis.constant.RedisConstant;
 import com.autumn.common.redis.core.RedisOperator;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,31 +44,18 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
 
     private final RedisOperator<List<DynamicRouteVo>> redisOperator;
 
-    private final CacheManager cacheManager;
-
-    private Cache<String, List<DynamicRouteVo>> routeVoCache;
-
     private final IAuthorizationUserService authorizationUserService;
-
-    @PostConstruct
-    public void init() {
-        QuickConfig qc = QuickConfig.newBuilder("routeVoCache")
-                .cacheType(CacheType.BOTH)
-                .syncLocal(true)
-                .build();
-        routeVoCache = cacheManager.getOrCreateCache(qc);
-    }
 
 
     @Override
     public List<DynamicRouteVo> getAsyncRoutes(Long userId) {
         String key = RedisConstant.ASYNC_ROUTES_PREFIX_KEY + userId;
-        List<DynamicRouteVo> routeList = routeVoCache.get(key);
+        List<DynamicRouteVo> routeList = redisOperator.get(key);
         if (!CollectionUtils.isEmpty(routeList)) {
             return routeList;
         }
         routeList = getRouteList(userId);
-        routeVoCache.put(key, routeList);
+        redisOperator.set(key, routeList);
         return routeList;
     }
 
@@ -151,9 +131,9 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
         wrapper.select(AuthorizationUser::getId);
         authorizationUserService.list(wrapper).forEach(user -> {
             String key = RedisConstant.ASYNC_ROUTES_PREFIX_KEY + user.getId();
-            if (!CollectionUtils.isEmpty(routeVoCache.get(key))) {
+            if (!CollectionUtils.isEmpty(redisOperator.get(key))) {
                 List<DynamicRouteVo> list = getRouteList(user.getId());
-                routeVoCache.put(key, list);
+                redisOperator.set(key, list);
             }
         });
     }

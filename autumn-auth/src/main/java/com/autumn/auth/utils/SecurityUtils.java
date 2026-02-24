@@ -1,6 +1,5 @@
 package com.autumn.auth.utils;
 
-import com.alibaba.fastjson2.JSONObject;
 import com.autumn.common.auth.constant.GrantAuthConstant;
 import com.autumn.common.core.exception.AutumnException;
 import com.autumn.common.core.result.ResultCodeEnum;

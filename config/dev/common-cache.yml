@@ -1,0 +1,9 @@
+spring:
+  data:
+    redis:
+      url: "redis://:autumn000214@127.0.0.1:6379/0?protocol=RESP3"
+      lettuce:
+        pool:
+          max-active: 50
+          max-idle: 20
+          min-idle: 5

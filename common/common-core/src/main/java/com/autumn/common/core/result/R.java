@@ -1,6 +1,9 @@
 package com.autumn.common.core.result;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+
+import java.time.LocalDateTime;
 
 /**
  * @author autumn
@@ -14,6 +17,10 @@ public class R<T> {
 
     // 返回消息
     private String message;
+
+    // 响应时间
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime timestamp;
 
     // 返回数据
     private T data;
@@ -31,6 +38,7 @@ public class R<T> {
         if (data != null) {
             result.setData(data);
         }
+        result.setTimestamp(LocalDateTime.now());
         return result;
     }
 

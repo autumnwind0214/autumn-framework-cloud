@@ -14,6 +14,7 @@
         <module>common</module>
         <module>autumn-services</module>
         <module>autumn-client</module>
+        <module>common/common-magic-api</module>
     </modules>
 
     <parent>
@@ -47,6 +48,7 @@
         <jedis-version>4.3.1</jedis-version>
         <alibaba-ai-version>1.0.0-M5.1</alibaba-ai-version>
         <pagehelper-version>2.1.0</pagehelper-version>
+        <magic-api-version>2.2.2</magic-api-version>
     </properties>
 
     <dependencyManagement>
@@ -194,14 +196,26 @@
                 <version>${simplemagic-version}</version>
             </dependency>
 
-
             <dependency>
-                <groupId>com.alicp.jetcache</groupId>
-                <artifactId>jetcache-bom</artifactId>
-                <version>${jetcache-version}</version>
-                <type>pom</type>
-                <scope>import</scope>
+                <groupId>org.ssssssss</groupId>
+                <artifactId>magic-api-spring-boot-starter</artifactId>
+                <version>${magic-api-version}</version>
             </dependency>
+
+
+           <!-- <dependency> -->
+           <!--     <groupId>com.alicp.jetcache</groupId> -->
+           <!--     <artifactId>jetcache-bom</artifactId> -->
+           <!--     <version>${jetcache-version}</version> -->
+           <!--     <type>pom</type> -->
+           <!--     <scope>import</scope> -->
+           <!-- </dependency> -->
+
+           <!-- <dependency> -->
+           <!--     <groupId>com.alicp.jetcache</groupId> -->
+           <!--     <artifactId>jetcache-redis-lettuce</artifactId> -->
+           <!--     <version>${jetcache-version}</version> -->
+           <!-- </dependency> -->
 
             <dependency>
                 <groupId>redis.clients</groupId>
