@@ -11,6 +11,7 @@ import org.springframework.util.ObjectUtils;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -280,17 +281,54 @@ public class RedisOperator<V> {
     }
 
     /**
-     * 根据key获取list列表
+     * 根据 key 获取 list 列表
      *
-     * @param key 缓存key
-     * @return key对应的list列表
+     * @param key 缓存 key
+     * @return key 对应的 list 列表
      */
-    public Collection<V> getList(String key) {
+    public List<V> getList(String key) {
         Long size = listOperations().size(key);
         if (size == null || size == 0) {
             return null;
         }
         return listOperations().range(key, 0, (size - 1));
+    }
+    
+    /**
+     * 设置 list 列表
+     *
+     * @param key   缓存 key
+     * @param values 值列表
+     */
+    public void setList(String key, Collection<V> values) {
+        if (values == null || values.isEmpty()) {
+            return;
+        }
+        listOperations().rightPushAll(key, values);
+    }
+    
+    /**
+     * 设置 list 列表并设置过期时间
+     *
+     * @param key     缓存 key
+     * @param values  值列表
+     * @param timeout 过期时间
+     * @param unit    过期时间的单位
+     */
+    public void setList(String key, Collection<V> values, long timeout, TimeUnit unit) {
+        this.setList(key, values);
+        this.setExpire(key, timeout, unit);
+    }
+    
+    /**
+     * 设置 list 列表并设置过期时间（单位秒）
+     *
+     * @param key     缓存 key
+     * @param values  值列表
+     * @param timeout 过期时间，单位：秒
+     */
+    public void setList(String key, Collection<V> values, long timeout) {
+        this.setList(key, values, timeout, TimeUnit.SECONDS);
     }
 
     /**

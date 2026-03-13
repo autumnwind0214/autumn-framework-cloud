@@ -14,6 +14,7 @@ public class I18nUtils {
     public final static String ROLE_NOT_EXIST = "ROLE_NOT_EXIST";
     public final static String ROLE_NOT_EMPTY = "ROLE_NOT_EMPTY";
     public final static String MENU_NAME_EXIST = "MENU_NAME_EXIST";
+    public final static String MENU_PATH_EXIST = "MENU_PATH_EXIST";
     public final static String BAN_DISABLED_USER = "BAN_DISABLED_USER";
     public final static String BAN_OPERATION_USER = "BAN_OPERATION_USER";
     public final static String PASSWORD_NOT_EQUALS = "PASSWORD_NOT_EQUALS";

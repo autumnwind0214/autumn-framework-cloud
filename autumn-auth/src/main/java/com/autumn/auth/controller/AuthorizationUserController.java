@@ -113,7 +113,9 @@ public class AuthorizationUserController {
      */
     @PreAuthorize("hasAuthority('system:user:disabled')")
     @PutMapping("/disabled/{id}/{disabled}")
-    public Boolean disabled(@PathVariable("id") @NotNull Long id, @PathVariable("disabled") @NotNull @ValidStatus Integer disabled) {
+    public Boolean disabled(@PathVariable("id") @NotNull Long id,
+                            @PathVariable("disabled")
+                            @NotNull @ValidStatus Integer disabled) {
         VerifyCheckUtils.checkAdminEdit(id);
         return authorizationUserService.disabled(id, disabled);
     }

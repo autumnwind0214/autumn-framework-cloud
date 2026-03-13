@@ -20,6 +20,7 @@ import com.autumn.common.core.utils.TreeBuilderUtils;
 import com.autumn.common.redis.constant.RedisConstant;
 import com.autumn.common.redis.core.RedisOperator;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -42,7 +43,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
 
     private final UserRoleMapper userRoleMapper;
 
-    private final RedisOperator<List<DynamicRouteVo>> redisOperator;
+    private final RedisOperator<DynamicRouteVo> redisOperator;
 
     private final IAuthorizationUserService authorizationUserService;
 
@@ -50,12 +51,12 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
     @Override
     public List<DynamicRouteVo> getAsyncRoutes(Long userId) {
         String key = RedisConstant.ASYNC_ROUTES_PREFIX_KEY + userId;
-        List<DynamicRouteVo> routeList = redisOperator.get(key);
+        List<DynamicRouteVo> routeList = redisOperator.getList(key);
         if (!CollectionUtils.isEmpty(routeList)) {
             return routeList;
         }
         routeList = getRouteList(userId);
-        redisOperator.set(key, routeList);
+        redisOperator.setList(key, routeList);
         return routeList;
     }
 
@@ -112,7 +113,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
     @Override
     public Boolean updateMenu(MenuDto dto) {
         Assert.isTrue(checkPathUnique(dto.getId(), dto.getPath()), I18nUtils.getMessage(I18nUtils.MENU_NAME_EXIST, null));
-        Assert.isTrue(checkNameUnique(dto.getId(), dto.getName()), "菜单名称已存在");
+        Assert.isTrue(checkNameUnique(dto.getId(), dto.getName()), I18nUtils.getMessage(I18nUtils.MENU_NAME_EXIST, null));
         Menu menu = new Menu();
         MapstructUtils.convert(dto, menu);
         MapstructUtils.convert(dto.getMeta(), menu);
@@ -131,9 +132,9 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
         wrapper.select(AuthorizationUser::getId);
         authorizationUserService.list(wrapper).forEach(user -> {
             String key = RedisConstant.ASYNC_ROUTES_PREFIX_KEY + user.getId();
-            if (!CollectionUtils.isEmpty(redisOperator.get(key))) {
+            if (!CollectionUtils.isEmpty(redisOperator.getList(key))) {
                 List<DynamicRouteVo> list = getRouteList(user.getId());
-                redisOperator.set(key, list);
+                redisOperator.setList(key, list);
             }
         });
     }
@@ -147,13 +148,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
      */
     @Override
     public boolean checkPathUnique(Long menuId, String path) {
-        if (!StringUtils.hasText(path)) {
-            return true;
-        }
-        LambdaQueryWrapper<Menu> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Menu::getPath, path);
-        wrapper.ne(menuId != null, Menu::getId, menuId);
-        return this.count(wrapper) <= 0;
+        return checkUnique(menuId, path, Menu::getPath);
     }
 
     /**
@@ -164,12 +159,30 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
      */
     @Override
     public boolean checkNameUnique(Long menuId, String name) {
-        if (!StringUtils.hasText(name)) {
+        return checkUnique(menuId, name, Menu::getName);
+    }
+
+    /**
+     * 通用唯一性检查方法
+     *
+     * @param menuId     当前菜单ID (排除自身)
+     * @param value      待检查的值 (名称或路径)
+     * @param columnFunc 指定要检查的字段 (如 Menu::getName 或 Menu::getPath)
+     * @return true: 唯一 (不存在重复), false: 不唯一
+     */
+    private boolean checkUnique(Long menuId, String value, SFunction<Menu, ?> columnFunc) {
+        // 1. 空值处理：如果值为空，通常视为通过或直接返回 true (根据原逻辑)
+        if (!StringUtils.hasText(value)) {
             return true;
         }
+        // 2. 构建查询条件
         LambdaQueryWrapper<Menu> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Menu::getName, name);
+        // 动态设置等于条件的字段
+        wrapper.eq(columnFunc, value);
+        // 排除当前记录自身 (如果 menuId 不为 null)
         wrapper.ne(menuId != null, Menu::getId, menuId);
+
+        // 3. 执行计数并返回结果
         return this.count(wrapper) <= 0;
     }
 

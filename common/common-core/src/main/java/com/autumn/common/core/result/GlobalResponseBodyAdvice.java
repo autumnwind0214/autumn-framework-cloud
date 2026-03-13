@@ -13,7 +13,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
  * @desc controller 返回统一响应体
  * @date 2025/5/15 22:02
  **/
-@RestControllerAdvice(basePackages = "com.autumn.*.controller")
+@RestControllerAdvice
 public class GlobalResponseBodyAdvice implements ResponseBodyAdvice<Object> {
 
     @Override
